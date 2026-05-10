@@ -376,6 +376,28 @@ main.container { max-width: 1180px; }
 }
 .bottom-nav a.add-btn:hover .add-circle { transform: scale(1.05); }
 
+/* Pill "Novo" para chamar atenção pra tela Sobre na primeira visita */
+.sobre-pill {
+    position: absolute;
+    top: -2px;
+    right: 50%;
+    transform: translateX(28px);
+    background: var(--gradient-accent);
+    color: #fff;
+    font-size: .55rem;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, .5);
+    animation: sobre-bounce 2s ease-in-out infinite;
+}
+@keyframes sobre-bounce {
+    0%, 100% { transform: translateX(28px) translateY(0); }
+    50%      { transform: translateX(28px) translateY(-3px); }
+}
+
 .alert { border: 0; border-radius: 12px; border-left: 4px solid; font-weight: 500; }
 .alert-success { background: rgba(16, 185, 129, .1); border-left-color: var(--accent-dark); color: #065f46; }
 .alert-warning { background: rgba(251, 191, 36, .12); border-left-color: #f59e0b; color: #78350f; }
@@ -1128,7 +1150,7 @@ main.container { max-width: 1180px; }
         <span class="add-circle"><i class="bi bi-plus-lg"></i></span>
         Nova
     </a>
-    <a href="#/sobre" data-route="sobre"><i class="bi bi-info-circle-fill"></i>Sobre</a>
+    <a href="#/sobre" data-route="sobre" id="link-sobre"><i class="bi bi-info-circle-fill"></i>Sobre<span class="sobre-pill" id="sobre-pill" hidden>Novo</span></a>
 </nav>
 
 <input type="file" id="import-file" accept="application/json" hidden>
@@ -1433,6 +1455,9 @@ function render() {
         renderForm(view, action, null); setActiveLinks('nova');
     } else if (route === 'sobre') {
         renderSobre(view, action); setActiveLinks('sobre');
+        localStorage.setItem('lucrometro:sobre-visto', '1');
+        const pill = document.getElementById('sobre-pill');
+        if (pill) pill.hidden = true;
     } else if (route === 'editar' && param) {
         const j = jornadas.find(x => x.id == param);
         if (!j) { location.hash = '#/historico'; return; }
@@ -1715,9 +1740,12 @@ function renderSobre(view, action) {
             </a>
         </div>
 
-        <div class="text-center mt-4 mb-2">
+        <div class="text-center mt-4 mb-2 d-flex flex-column flex-md-row gap-2 justify-content-center">
             <a href="#/" class="btn btn-primary btn-lg">
                 <i class="bi bi-arrow-left"></i> Voltar ao app
+            </a>
+            <a href="index.html" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-box-arrow-up-right"></i> Ver landing completa
             </a>
         </div>
     `;
@@ -2227,6 +2255,12 @@ if (!localStorage.getItem(KEY)) {
             km_inicial: row[3], km_final: row[4], valor_bruto: row[5] };
     });
     save(seed);
+}
+
+// Mostra "Novo" no bottom-nav até o usuário visitar a tela Sobre pela primeira vez
+if (!localStorage.getItem('lucrometro:sobre-visto')) {
+    const pill = document.getElementById('sobre-pill');
+    if (pill) pill.hidden = false;
 }
 
 render();

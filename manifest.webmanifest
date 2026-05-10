@@ -2,7 +2,7 @@
     "name": "Rota Certa",
     "short_name": "Rota Certa",
     "description": "Calculadora de rentabilidade para motoristas",
-    "start_url": "./index.html",
+    "start_url": "./app.html",
     "scope": "./",
     "display": "standalone",
     "orientation": "portrait",
