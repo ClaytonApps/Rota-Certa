@@ -4,8 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f1e3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rota Certa">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Rota Certa · Sua jornada lucrativa começa aqui</title>
 <meta name="description" content="Calcule a rentabilidade real das suas jornadas. Descubra quanto ganha por hora, por km e onde está o seu lucro.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -818,16 +825,17 @@ footer a:hover { color: #fff; }
     </div>
 </section>
 
-<!-- CTA final -->
+<!-- CTA final / Como instalar -->
 <section class="cta-final" id="instalar">
-    <h2>Pronto pra saber quanto você ganha de verdade?</h2>
-    <p>Abra o app no navegador ou instale como aplicativo no celular. Sem cadastro, sem cartão, sem espera.</p>
+    <h2>Instale como app no celular</h2>
+    <p>
+        No <strong>Chrome do Android</strong>: menu ⋮ → <strong>"Instalar app"</strong> ou <strong>"Adicionar à tela inicial"</strong>.<br>
+        No <strong>Safari do iPhone</strong>: botão Compartilhar (□↑) → <strong>"Adicionar à Tela de Início"</strong>.<br>
+        Funciona offline, abre em tela cheia, com ícone próprio. Sem loja de apps.
+    </p>
     <div class="hero-ctas" style="justify-content: center;">
         <a href="app.html" class="btn-hero-primary">
-            <i class="bi bi-rocket-takeoff-fill"></i> Abrir Rota Certa
-        </a>
-        <a href="pwa/" class="btn-hero-secondary">
-            <i class="bi bi-download"></i> Instalar PWA
+            <i class="bi bi-rocket-takeoff-fill"></i> Abrir Rota Certa agora
         </a>
     </div>
 </section>
@@ -840,5 +848,12 @@ footer a:hover { color: #fff; }
     <p style="margin: 0;">Calculadora de rentabilidade para motoristas · Feito com <i class="bi bi-heart-fill" style="color: #ef4444;"></i> para quem está na rua.</p>
 </footer>
 
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW falhou:', err));
+    });
+}
+</script>
 </body>
 </html>

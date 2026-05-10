@@ -28,7 +28,7 @@ Este repositório contém **três variantes** do mesmo app — escolha a que ser
 |----------|-----------|----------|
 | **Landing page** | [`index.html`](index.html) | Página de demonstração / home do projeto |
 | **App standalone** | [`app.html`](app.html) | Arquivo único; abre com duplo clique |
-| **PWA instalável** | [`pwa/`](pwa/) | Versão para instalar no celular como aplicativo |
+| **PWA instalável** | [`./`](./) | Versão para instalar no celular como aplicativo |
 | **Versão Django (full-stack)** | [`rota_certa/`](rota_certa/), [`jornadas/`](jornadas/) | Backend completo com admin, signals e Firebase stub |
 
 ---
@@ -41,7 +41,7 @@ Hospedado em GitHub Pages: `https://SEU-USUARIO.github.io/rota-certa/`
 
 - Landing → raiz
 - App → `/app.html`
-- PWA → `/pwa/`
+- PWA → `/./`
 
 ### Localmente, sem servidor
 
@@ -74,11 +74,11 @@ python manage.py runserver
 ## 📲 Instalando como app no celular
 
 1. Suba o repositório no GitHub Pages (instruções abaixo)
-2. No Chrome do Android, abra a URL `https://SEU-USUARIO.github.io/rota-certa/pwa/`
+2. No Chrome do Android, abra a URL `https://SEU-USUARIO.github.io/rota-certa/./`
 3. Menu ⋮ → **"Instalar app"** ou **"Adicionar à tela inicial"**
 4. O app vira um ícone na tela inicial, abre em tela cheia, e funciona offline
 
-Veja [`pwa/COMO-INSTALAR.md`](pwa/COMO-INSTALAR.md) para detalhes (incluindo iOS).
+Veja [`./COMO-INSTALAR.md`](./COMO-INSTALAR.md) para detalhes (incluindo iOS).
 
 ---
 

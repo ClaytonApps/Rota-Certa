@@ -1,22 +1,22 @@
 /**
- * Service Worker — Rota Certa
+ * Service Worker — Rota Certa (raiz).
  *
- * Faz cache do app shell (HTML, manifest, ícones) e dos CDNs externos
- * (Bootstrap, Bootstrap Icons, Inter) na primeira visita. A partir daí o
- * app abre instantaneamente e funciona offline.
+ * Cobre toda a aplicação: landing (index.html), app (app.html), manifest,
+ * ícones e CDNs externos. App instalado abre direto em app.html.
  *
- * Estratégia:
- *   - App shell  → cache-first (versionado por CACHE_NAME)
+ *   - App shell  → cache-first
  *   - Externos   → stale-while-revalidate
  */
-const CACHE_NAME = 'rota-certa-v2';
+const CACHE_NAME = 'rota-certa-v3';
 const APP_SHELL = [
     './',
     './index.html',
+    './app.html',
     './manifest.webmanifest',
     './icon.svg',
     './icon-192.png',
     './icon-512.png',
+    './icon-maskable.png',
 ];
 
 self.addEventListener('install', event => {
@@ -42,7 +42,6 @@ self.addEventListener('fetch', event => {
     const sameOrigin = url.origin === self.location.origin;
 
     if (sameOrigin) {
-        // Cache-first para o app shell
         event.respondWith(
             caches.match(req).then(cached => cached || fetch(req).then(res => {
                 const copy = res.clone();
@@ -51,7 +50,6 @@ self.addEventListener('fetch', event => {
             }).catch(() => caches.match('./index.html')))
         );
     } else {
-        // Stale-while-revalidate para CDNs externos
         event.respondWith(
             caches.open(CACHE_NAME).then(cache =>
                 cache.match(req).then(cached => {
