@@ -542,22 +542,30 @@ main.container { max-width: 1180px; }
 .hm-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 .hm-grid {
     display: grid;
-    grid-template-columns: 38px repeat(24, minmax(18px, 1fr));
+    grid-template-columns: 42px repeat(24, minmax(22px, 1fr));
     gap: 3px;
-    min-width: 560px;
+    min-width: 680px;
 }
 .hm-corner, .hm-hcol, .hm-day {
-    font-size: .65rem;
+    font-size: .6rem;
     font-weight: 700;
     color: var(--text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
-    text-transform: uppercase;
-    letter-spacing: .5px;
+    letter-spacing: .3px;
+    font-variant-numeric: tabular-nums;
 }
-.hm-day { justify-content: flex-end; padding-right: .25rem; }
-.hm-hcol { height: 16px; }
+.hm-day {
+    justify-content: flex-end;
+    padding-right: .35rem;
+    text-transform: uppercase;
+}
+.hm-hcol {
+    height: 18px;
+    color: var(--text);
+    font-weight: 600;
+}
 .hm-cell {
     aspect-ratio: 1;
     border-radius: 4px;
@@ -581,14 +589,24 @@ main.container { max-width: 1180px; }
     gap: .5rem;
     margin-top: .85rem;
     font-size: .7rem;
-    color: var(--text-muted);
-    font-weight: 600;
+    font-weight: 700;
 }
+.hm-leg-label { white-space: nowrap; }
+.hm-leg-bad   { color: #dc2626; }
+.hm-leg-mid   { color: #d97706; }
+.hm-leg-good  { color: var(--accent-dark); }
 .hm-legend-bar {
     flex: 1;
-    height: 8px;
-    border-radius: 4px;
-    background: linear-gradient(90deg, #eef2f7 0%, #10b981 50%, #059669 100%);
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #ef4444 0%, #fbbf24 50%, #10b981 100%);
+}
+.hm-legend-max {
+    margin-top: .35rem;
+    font-size: .7rem;
+    color: var(--text-muted);
+    text-align: right;
+    font-weight: 600;
 }
 .hm-empty, .heatmap-empty {
     background: var(--surface);
@@ -634,6 +652,77 @@ main.container { max-width: 1180px; }
 .hm-insight .hm-i-rh { color: var(--accent-dark); font-weight: 700; }
 @media (min-width: 768px) {
     .hm-insights { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ─── Support banner (apoio Mercado Pago) ─────────────────── */
+.support-banner {
+    margin-top: 2rem;
+    background: linear-gradient(135deg, rgba(16,185,129,.1) 0%, rgba(15,30,58,.04) 100%);
+    border: 1px solid rgba(16,185,129,.3);
+    border-radius: 16px;
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.support-banner::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16,185,129,.18) 0%, transparent 70%);
+    pointer-events: none;
+}
+.support-banner .sb-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto .75rem;
+    border-radius: 16px;
+    background: var(--gradient-accent);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, .35);
+}
+.support-banner .sb-content { position: relative; z-index: 1; }
+.support-banner h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin: 0 0 .35rem;
+    color: var(--text);
+}
+.support-banner p {
+    margin: 0 0 1.25rem;
+    color: var(--text-muted);
+    font-size: .9rem;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.support-banner .sb-btn {
+    background: var(--gradient-accent);
+    border: 0;
+    color: #fff;
+    font-weight: 700;
+    padding: .85rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(16, 185, 129, .4);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    position: relative;
+    z-index: 1;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.support-banner .sb-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(16, 185, 129, .5);
+    color: #fff;
+}
+@media (min-width: 768px) {
+    .support-banner { padding: 2rem; }
+    .support-banner h3 { font-size: 1.25rem; }
 }
 @keyframes pulse-dot {
     0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, .6); }
@@ -1058,7 +1147,18 @@ function renderDashboard(view, action, jornadas) {
         ${ultimas.length ? `<div class="journey-list grid">${ultimas.map(j => journeyCard(j, true)).join('')}</div>` :
             `<div class="empty-state"><div class="empty-icon"><i class="bi bi-inbox"></i></div>
                 <p class="mb-3">Nenhuma jornada no período selecionado.</p>
-                <a href="#/nova" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Registrar jornada</a></div>`}`;
+                <a href="#/nova" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Registrar jornada</a></div>`}
+
+        <div class="support-banner">
+            <div class="sb-icon"><i class="bi bi-heart-fill"></i></div>
+            <div class="sb-content">
+                <h3>Curtindo o Rota Certa?</h3>
+                <p>Apoie o projeto para mantê-lo gratuito e sem anúncios para todos os motoristas.</p>
+            </div>
+            <a href="https://mpago.la/2z5Uj6E" target="_blank" rel="noopener" class="btn btn-success sb-btn">
+                <i class="bi bi-cash-coin"></i> Apoiar via Mercado Pago
+            </a>
+        </div>`;
 }
 
 const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -1073,19 +1173,28 @@ function renderHeatmap(jornadas) {
                 Conclua algumas jornadas para ver seus melhores horários aqui.
             </div>`;
     }
+    // Escala vermelho (ruim) → amarelo (médio) → verde (excelente)
     const cor = (rh) => {
         if (rh <= 0) return '#eef2f7';
         const t = Math.min(1, rh / maxRh);
-        // De cinza-claro (#eef2f7) → verde-escuro (#059669) com tom de azul intermediário
-        const r = Math.round(238 - 233 * t);
-        const g = Math.round(242 - 92  * t);
-        const b = Math.round(247 - 142 * t);
+        let r, g, b;
+        if (t < 0.5) {
+            const k = t * 2;                              // 0..1 dentro da metade
+            r = Math.round(239 + (251 - 239) * k);
+            g = Math.round( 68 + (191 -  68) * k);
+            b = Math.round( 68 + ( 36 -  68) * k);
+        } else {
+            const k = (t - 0.5) * 2;
+            r = Math.round(251 + ( 16 - 251) * k);
+            g = Math.round(191 + (185 - 191) * k);
+            b = Math.round( 36 + (129 -  36) * k);
+        }
         return `rgb(${r}, ${g}, ${b})`;
     };
 
     let cabec = '<div class="hm-corner"></div>';
     for (let h = 0; h < 24; h++) {
-        cabec += `<div class="hm-hcol">${h % 3 === 0 ? String(h).padStart(2, '0') : ''}</div>`;
+        cabec += `<div class="hm-hcol">${String(h).padStart(2, '0')}</div>`;
     }
     let linhas = '';
     for (let d = 0; d < 7; d++) {
@@ -1140,10 +1249,13 @@ function renderHeatmap(jornadas) {
                 </div>
             </div>
             <div class="hm-legend">
-                <span>Menor</span>
+                <span class="hm-leg-label hm-leg-bad">● Ruim</span>
                 <span class="hm-legend-bar"></span>
-                <span>Maior · R$ ${fmtBR(maxRh)}/h</span>
+                <span class="hm-leg-label hm-leg-mid">● Médio</span>
+                <span class="hm-legend-bar"></span>
+                <span class="hm-leg-label hm-leg-good">● Excelente</span>
             </div>
+            <div class="hm-legend-max">Pico: R$ ${fmtBR(maxRh)}/h</div>
             ${insights}
         </div>`;
 }
