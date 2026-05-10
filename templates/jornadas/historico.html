@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Histórico{% endblock %}
+
+{% block topbar_action %}
+<a href="{% url 'jornadas:nova_jornada' %}" class="fab-add">
+    <i class="bi bi-plus-lg"></i> Nova
+</a>
+{% endblock %}
+
+{% block content %}
+{% with active='historico' %}{% endwith %}
+
+<div class="section-title">
+    <span>Todas as jornadas</span>
+    <span class="badge rounded-pill" style="background: var(--gradient-primary);">{{ jornadas|length }}</span>
+</div>
+
+{% if jornadas %}
+    <div class="journey-list grid">
+        {% for j in jornadas %}
+        <div class="journey-item" style="cursor: default;">
+            <div class="row-top">
+                <span class="date"><i class="bi bi-calendar3"></i>{{ j.data|date:"d/m/Y" }}</span>
+                <span class="amount text-money">R$ {{ j.valor_bruto }}</span>
+            </div>
+            <div class="stats mb-2">
+                <span><i class="bi bi-clock"></i> {{ j.hora_inicio|time:"H:i" }} – {{ j.hora_fim|time:"H:i" }}</span>
+                <span><i class="bi bi-hourglass"></i> {{ j.total_horas_formatado }}</span>
+                <span><i class="bi bi-signpost"></i> {{ j.total_km }} km</span>
+                <span><i class="bi bi-fuel-pump"></i> R$ {{ j.preco_por_km }}/km</span>
+                <span style="grid-column: span 2;"><i class="bi bi-cash-coin"></i> R$ {{ j.preco_por_hora }}/h</span>
+            </div>
+            <div class="d-flex gap-2 mt-2">
+                <a href="{% url 'jornadas:editar_jornada' j.pk %}"
+                   class="btn btn-sm btn-outline-primary flex-fill">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a href="{% url 'jornadas:excluir_jornada' j.pk %}"
+                   class="btn btn-sm btn-outline-danger flex-fill">
+                    <i class="bi bi-trash"></i> Excluir
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+        <p class="mb-3">Nenhuma jornada registrada ainda.</p>
+        <a href="{% url 'jornadas:nova_jornada' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Registrar a primeira
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

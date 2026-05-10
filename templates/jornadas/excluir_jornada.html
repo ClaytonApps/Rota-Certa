@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Excluir jornada{% endblock %}
+{% block content %}
+
+<div class="section-title">
+    <span>Confirmar exclusão</span>
+</div>
+
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    Esta ação não pode ser desfeita.
+</div>
+
+<div class="journey-item mb-3" style="cursor: default;">
+    <div class="row-top">
+        <span class="date"><i class="bi bi-calendar3"></i>{{ jornada.data|date:"d/m/Y" }}</span>
+        <span class="amount text-money">R$ {{ jornada.valor_bruto }}</span>
+    </div>
+    <div class="stats">
+        <span><i class="bi bi-clock"></i> {{ jornada.hora_inicio|time:"H:i" }} – {{ jornada.hora_fim|time:"H:i" }}</span>
+        <span><i class="bi bi-hourglass"></i> {{ jornada.total_horas_formatado }}</span>
+        <span><i class="bi bi-signpost"></i> {{ jornada.total_km }} km</span>
+        <span><i class="bi bi-fuel-pump"></i> R$ {{ jornada.preco_por_km }}/km</span>
+        <span style="grid-column: span 2;"><i class="bi bi-cash-coin"></i> R$ {{ jornada.preco_por_hora }}/h</span>
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-danger btn-lg">
+            <i class="bi bi-trash"></i> Confirmar exclusão
+        </button>
+        <a href="{% url 'jornadas:historico' %}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

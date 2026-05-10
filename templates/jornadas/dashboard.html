@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block topbar_action %}
+<a href="{% url 'jornadas:nova_jornada' %}" class="fab-add d-none d-lg-inline-flex">
+    <i class="bi bi-plus-lg"></i> Nova jornada
+</a>
+{% endblock %}
+
+{% block content %}
+{% with active='dashboard' %}{% endwith %}
+
+<div class="period-filter">
+    {% for chave, label in periodos.items %}
+        <a href="?periodo={{ chave }}"
+           class="chip {% if periodo_atual == chave %}active{% endif %}">
+            {{ label }}
+        </a>
+    {% endfor %}
+</div>
+
+<div class="hero-card mb-3 mb-lg-4">
+    <div>
+        <div class="label">Lucro total</div>
+        <div class="value text-money">R$ {{ resumo.total_bruto }}</div>
+        <div class="meta">
+            <i class="bi bi-receipt"></i>
+            {{ resumo.total_jornadas }} jornada{{ resumo.total_jornadas|pluralize }} no período
+        </div>
+    </div>
+    <div class="hero-card-cta d-none d-lg-block">
+        <a href="{% url 'jornadas:nova_jornada' %}" class="btn btn-light btn-lg fw-bold" style="color: var(--primary);">
+            <i class="bi bi-plus-lg"></i> Registrar jornada
+        </a>
+    </div>
+</div>
+
+<div class="row g-2 g-lg-3 mb-2">
+    <div class="col-6 col-lg-3">
+        <div class="card metric-card accent">
+            <div class="icon-pill"><i class="bi bi-clock-fill"></i></div>
+            <div class="label">Média R$/hora</div>
+            <div class="value text-money">R$ {{ resumo.media_por_hora }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card metric-card accent">
+            <div class="icon-pill"><i class="bi bi-fuel-pump-fill"></i></div>
+            <div class="label">Média R$/km</div>
+            <div class="value text-money">R$ {{ resumo.media_por_km }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card metric-card primary">
+            <div class="icon-pill"><i class="bi bi-signpost-split-fill"></i></div>
+            <div class="label">Total km</div>
+            <div class="value text-money">{{ resumo.total_km }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card metric-card primary">
+            <div class="icon-pill"><i class="bi bi-hourglass-split"></i></div>
+            <div class="label">Total horas</div>
+            <div class="value text-money">{{ resumo.total_horas }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="section-title">
+    <span>Últimas jornadas</span>
+    <a href="{% url 'jornadas:historico' %}" class="text-decoration-none small fw-semibold" style="color: var(--primary);">
+        Ver tudo <i class="bi bi-arrow-right"></i>
+    </a>
+</div>
+
+{% if ultimas %}
+    <div class="journey-list grid">
+        {% for j in ultimas %}
+        <a href="{% url 'jornadas:editar_jornada' j.pk %}" class="journey-item">
+            <div class="row-top">
+                <span class="date"><i class="bi bi-calendar3"></i>{{ j.data|date:"d/m/Y" }}</span>
+                <span class="amount text-money">R$ {{ j.valor_bruto }}</span>
+            </div>
+            <div class="stats">
+                <span><i class="bi bi-signpost"></i> {{ j.total_km }} km</span>
+                <span><i class="bi bi-clock"></i> {{ j.total_horas_formatado }}</span>
+                <span><i class="bi bi-fuel-pump"></i> R$ {{ j.preco_por_km }}/km</span>
+                <span><i class="bi bi-cash-coin"></i> R$ {{ j.preco_por_hora }}/h</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+        <p class="mb-3">Nenhuma jornada no período selecionado.</p>
+        <a href="{% url 'jornadas:nova_jornada' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Registrar jornada
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

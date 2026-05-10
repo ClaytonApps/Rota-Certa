@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{% if editando %}Editar jornada{% else %}Nova jornada{% endif %}{% endblock %}
+{% block content %}
+{% with active='nova' %}{% endwith %}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+        <div class="section-title">
+            <span>{% if editando %}Editar jornada{% else %}Registrar nova jornada{% endif %}</span>
+        </div>
+
+        <button type="button" class="btn-voice-all mb-3" data-voice-fill-all>
+            <i class="bi bi-mic-fill"></i> Preencher tudo por voz
+        </button>
+
+        <div class="card p-3 p-md-4 p-lg-5">
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="form-desktop-grid">
+                    <div class="mb-3 form-full">
+                        <label for="{{ form.data.id_for_label }}" class="form-label">
+                            <i class="bi bi-calendar3"></i> Data
+                        </label>
+                        {{ form.data }}
+                        {% for e in form.data.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.hora_inicio.id_for_label }}" class="form-label">
+                            <i class="bi bi-play-circle"></i> Início
+                        </label>
+                        <div class="input-with-mic">
+                            {{ form.hora_inicio }}
+                            <button type="button" class="mic-btn"
+                                    data-voice-target="{{ form.hora_inicio.id_for_label }}"
+                                    data-voice-type="time"
+                                    data-voice-prompt="Hora de início. Ex: oito horas."
+                                    aria-label="Ditar hora de início">
+                                <i class="bi bi-mic-fill"></i>
+                            </button>
+                        </div>
+                        {% for e in form.hora_inicio.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.hora_fim.id_for_label }}" class="form-label">
+                            <i class="bi bi-stop-circle"></i> Término
+                        </label>
+                        <div class="input-with-mic">
+                            {{ form.hora_fim }}
+                            <button type="button" class="mic-btn"
+                                    data-voice-target="{{ form.hora_fim.id_for_label }}"
+                                    data-voice-type="time"
+                                    data-voice-prompt="Hora de término."
+                                    aria-label="Ditar hora de término">
+                                <i class="bi bi-mic-fill"></i>
+                            </button>
+                        </div>
+                        {% for e in form.hora_fim.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.km_inicial.id_for_label }}" class="form-label">
+                            <i class="bi bi-signpost"></i> KM inicial
+                        </label>
+                        <div class="input-with-mic">
+                            {{ form.km_inicial }}
+                            <button type="button" class="mic-btn"
+                                    data-voice-target="{{ form.km_inicial.id_for_label }}"
+                                    data-voice-type="number"
+                                    data-voice-prompt="KM inicial."
+                                    aria-label="Ditar KM inicial">
+                                <i class="bi bi-mic-fill"></i>
+                            </button>
+                        </div>
+                        {% for e in form.km_inicial.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.km_final.id_for_label }}" class="form-label">
+                            <i class="bi bi-signpost-fill"></i> KM final
+                        </label>
+                        <div class="input-with-mic">
+                            {{ form.km_final }}
+                            <button type="button" class="mic-btn"
+                                    data-voice-target="{{ form.km_final.id_for_label }}"
+                                    data-voice-type="number"
+                                    data-voice-prompt="KM final."
+                                    aria-label="Ditar KM final">
+                                <i class="bi bi-mic-fill"></i>
+                            </button>
+                        </div>
+                        {% for e in form.km_final.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+                    </div>
+
+                    <div class="mb-4 form-full">
+                        <label for="{{ form.valor_bruto.id_for_label }}" class="form-label">
+                            <i class="bi bi-cash-coin"></i> Valor bruto (R$)
+                        </label>
+                        <div class="input-with-mic">
+                            {{ form.valor_bruto }}
+                            <button type="button" class="mic-btn"
+                                    data-voice-target="{{ form.valor_bruto.id_for_label }}"
+                                    data-voice-type="number"
+                                    data-voice-prompt="Valor bruto em reais."
+                                    aria-label="Ditar valor bruto">
+                                <i class="bi bi-mic-fill"></i>
+                            </button>
+                        </div>
+                        {% for e in form.valor_bruto.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="d-flex flex-column flex-lg-row gap-2 justify-content-lg-end">
+                    <a href="{% if editando %}{% url 'jornadas:historico' %}{% else %}{% url 'jornadas:dashboard' %}{% endif %}"
+                       class="btn btn-outline-secondary order-lg-1">Cancelar</a>
+                    <button type="submit" class="btn btn-success btn-lg order-lg-2 px-lg-5">
+                        <i class="bi bi-check-lg"></i>
+                        {% if editando %}Atualizar jornada{% else %}Salvar jornada{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/voice.js' %}"></script>
+{% endblock %}

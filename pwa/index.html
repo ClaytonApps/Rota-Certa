@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1e3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rota Certa">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Rota Certa</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary: #0f1e3a;
+    --primary-dark: #0a1628;
+    --primary-light: #1e3a5f;
+    --gray-dark: #1f2937;
+    --gray: #374151;
+    --gray-light: #6b7280;
+    --accent: #10b981;
+    --accent-dark: #059669;
+    --accent-light: #34d399;
+    --bg: #f3f4f6;
+    --surface: #ffffff;
+    --border: #d1d5db;
+    --text: #111827;
+    --text-muted: #4b5563;
+    --shadow-sm: 0 1px 2px rgba(15, 30, 58, .05);
+    --shadow: 0 4px 16px rgba(15, 30, 58, .12);
+    --shadow-lg: 0 12px 32px rgba(15, 30, 58, .18);
+    --gradient-primary: linear-gradient(135deg, #0f1e3a 0%, #1f2937 100%);
+    --gradient-accent: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    --gradient-mix: linear-gradient(135deg, #0f1e3a 0%, #10b981 100%);
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    padding-bottom: 90px;
+    min-height: 100vh;
+}
+
+main.container { max-width: 1180px; }
+
+@media (min-width: 992px) {
+    body { padding-bottom: 2rem; }
+}
+
+.topbar {
+    background: var(--gradient-primary);
+    color: #fff;
+    padding: 1rem 0 1.25rem;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+.topbar .brand {
+    font-weight: 800;
+    letter-spacing: .3px;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+.topbar .brand-icon {
+    background: rgba(255,255,255,.18);
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+}
+.topbar .brand small {
+    display: block;
+    font-size: .7rem;
+    font-weight: 500;
+    opacity: .85;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.top-nav {
+    display: none;
+    gap: .25rem;
+    align-items: center;
+    margin-left: 2rem;
+    flex: 1;
+}
+.top-nav a {
+    color: rgba(255, 255, 255, .85);
+    text-decoration: none;
+    padding: .55rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: .9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    transition: all .15s ease;
+}
+.top-nav a:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.top-nav a.active {
+    background: rgba(255, 255, 255, .18);
+    color: #fff;
+    box-shadow: inset 0 -2px 0 var(--accent-light);
+}
+@media (min-width: 992px) {
+    .top-nav { display: flex; }
+    .topbar .brand small { display: inline; margin-left: .5rem; opacity: .7; }
+}
+
+.card {
+    border: 0;
+    border-radius: 1rem;
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.card:hover { box-shadow: var(--shadow); }
+
+.hero-card {
+    background: var(--gradient-mix);
+    color: #fff;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+.hero-card::after {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(255,255,255,.18) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.hero-card .label {
+    font-size: .75rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    opacity: .9;
+    font-weight: 600;
+}
+.hero-card .value {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin: .25rem 0;
+    letter-spacing: -.5px;
+}
+.hero-card .meta {
+    font-size: .85rem;
+    opacity: .9;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+.metric-card { padding: 1rem; height: 100%; }
+.metric-card .label {
+    font-size: .7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+}
+.metric-card .label i { font-size: .9rem; }
+.metric-card .value {
+    font-size: 1.45rem;
+    font-weight: 700;
+    margin-top: .35rem;
+    color: var(--text);
+}
+.metric-card.accent .value { color: var(--accent-dark); }
+.metric-card.primary .value { color: var(--primary); }
+.metric-card .icon-pill {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .95rem;
+    margin-bottom: .25rem;
+}
+.metric-card.accent .icon-pill { background: rgba(16, 185, 129, .12); color: var(--accent-dark); }
+.metric-card.primary .icon-pill { background: rgba(30, 64, 175, .1); color: var(--primary); }
+
+.period-filter {
+    display: flex;
+    gap: .5rem;
+    overflow-x: auto;
+    padding-bottom: .25rem;
+    margin-bottom: 1rem;
+    scrollbar-width: none;
+}
+.period-filter::-webkit-scrollbar { display: none; }
+.period-filter .chip {
+    flex: 0 0 auto;
+    padding: .5rem 1rem;
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+    font-size: .85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .15s ease;
+    white-space: nowrap;
+}
+.period-filter .chip:hover { border-color: var(--primary-light); color: var(--primary); }
+.period-filter .chip.active {
+    background: var(--gradient-primary);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(30, 64, 175, .25);
+}
+
+.section-title {
+    font-size: .8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    margin: 1.5rem 0 .75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.journey-list { display: flex; flex-direction: column; gap: .65rem; }
+
+.journey-item {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--primary);
+    text-decoration: none;
+    color: var(--text);
+    transition: transform .15s ease, box-shadow .15s ease;
+    display: block;
+}
+.journey-item:hover { transform: translateY(-1px); box-shadow: var(--shadow); color: var(--text); }
+.journey-item .row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
+.journey-item .date { font-weight: 700; color: var(--text); display: flex; align-items: center; gap: .4rem; }
+.journey-item .date i { color: var(--primary); }
+.journey-item .amount {
+    background: var(--gradient-accent);
+    color: #fff;
+    padding: .3rem .7rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: .9rem;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, .3);
+}
+.journey-item .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: .35rem .75rem; font-size: .8rem; color: var(--text-muted); }
+.journey-item .stats span { display: flex; align-items: center; gap: .35rem; }
+.journey-item .stats i { color: var(--primary-light); }
+
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+.empty-state .empty-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+}
+
+.btn { border-radius: 12px; font-weight: 600; padding: .6rem 1.1rem; transition: all .15s ease; }
+.btn-lg { padding: .85rem 1.25rem; border-radius: 14px; }
+.btn-primary { background: var(--gradient-primary); border: 0; box-shadow: 0 4px 12px rgba(30, 64, 175, .25); }
+.btn-primary:hover, .btn-primary:focus { background: var(--gradient-primary); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(30, 64, 175, .35); }
+.btn-success { background: var(--gradient-accent); border: 0; box-shadow: 0 4px 12px rgba(16, 185, 129, .3); }
+.btn-success:hover { background: var(--gradient-accent); transform: translateY(-1px); }
+.btn-outline-primary { border: 1.5px solid var(--primary); color: var(--primary); }
+.btn-outline-primary:hover { background: var(--primary); border-color: var(--primary); }
+.btn-outline-success { border: 1.5px solid var(--accent-dark); color: var(--accent-dark); }
+.btn-outline-success:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.btn-outline-danger { border-width: 1.5px; }
+.btn-outline-secondary { border-width: 1.5px; }
+
+.fab-add {
+    background: var(--gradient-accent);
+    color: #fff;
+    border-radius: 999px;
+    padding: .55rem 1rem;
+    font-weight: 600;
+    font-size: .9rem;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: .35rem;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, .3);
+    transition: transform .15s ease;
+}
+.fab-add:hover { transform: translateY(-1px); color: #fff; }
+
+.form-label { font-weight: 600; font-size: .85rem; color: var(--text); margin-bottom: .35rem; display: flex; align-items: center; gap: .35rem; }
+.form-label i { color: var(--primary); font-size: .9rem; }
+.form-control, .form-control-lg {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: .75rem 1rem;
+    font-size: 1rem;
+    background: var(--surface);
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.form-control-lg { font-size: 1.1rem; padding: .85rem 1rem; }
+.form-control:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59, 130, 246, .15); outline: none; }
+
+@media (min-width: 992px) { .bottom-nav { display: none !important; } }
+.bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    box-shadow: 0 -4px 16px rgba(15, 23, 42, .06);
+    display: flex;
+    justify-content: space-around;
+    padding: .5rem 0 calc(.5rem + env(safe-area-inset-bottom));
+    z-index: 1030;
+    border-top: 1px solid var(--border);
+}
+.bottom-nav a {
+    flex: 1;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: .72rem;
+    text-decoration: none;
+    font-weight: 600;
+    padding: .25rem;
+    transition: color .15s ease;
+    position: relative;
+}
+.bottom-nav a i { display: block; font-size: 1.4rem; margin-bottom: 2px; }
+.bottom-nav a.active { color: var(--primary); }
+.bottom-nav a.active::before {
+    content: '';
+    position: absolute;
+    top: -.5rem; left: 50%;
+    transform: translateX(-50%);
+    width: 32px; height: 3px;
+    background: var(--gradient-primary);
+    border-radius: 0 0 4px 4px;
+}
+.bottom-nav a.add-btn { flex: 0; }
+.bottom-nav a.add-btn .add-circle {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--gradient-accent);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    margin: -1.5rem auto .25rem;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, .4);
+    transition: transform .15s ease;
+}
+.bottom-nav a.add-btn:hover .add-circle { transform: scale(1.05); }
+
+.alert { border: 0; border-radius: 12px; border-left: 4px solid; font-weight: 500; }
+.alert-success { background: rgba(16, 185, 129, .1); border-left-color: var(--accent-dark); color: #065f46; }
+.alert-warning { background: rgba(251, 191, 36, .12); border-left-color: #f59e0b; color: #78350f; }
+.alert-info    { background: rgba(59, 130, 246, .1); border-left-color: var(--primary); color: var(--primary-dark); }
+.alert-danger  { background: rgba(239, 68, 68, .1); border-left-color: #dc2626; color: #7f1d1d; }
+
+.text-money { font-variant-numeric: tabular-nums; }
+
+@media (max-width: 575px) { .hero-card .value { font-size: 1.85rem; } }
+
+@media (min-width: 992px) {
+    .topbar { padding: 1.25rem 0; }
+    .topbar .brand { font-size: 1.4rem; }
+    .topbar .brand-icon { width: 42px; height: 42px; font-size: 1.25rem; }
+    .hero-card { padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+    .hero-card .value { font-size: 2.75rem; }
+    .hero-card-cta { z-index: 1; position: relative; }
+    .metric-card { padding: 1.5rem; }
+    .metric-card .value { font-size: 1.75rem; }
+    .metric-card .icon-pill { width: 40px; height: 40px; font-size: 1.1rem; }
+    .section-title { font-size: .85rem; margin-top: 2rem; }
+    .form-desktop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; }
+    .form-desktop-grid .form-full { grid-column: 1 / -1; }
+    .journey-list.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: .85rem; }
+}
+@media (min-width: 1200px) { .hero-card .value { font-size: 3rem; } }
+
+.input-with-mic { position: relative; }
+.input-with-mic .form-control { padding-right: 3rem; }
+.mic-btn {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    border: 0;
+    background: var(--gradient-primary);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(30, 64, 175, .25);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.mic-btn:hover { transform: translateY(-50%) scale(1.05); }
+.mic-btn:active { transform: translateY(-50%) scale(0.95); }
+.mic-btn.voice-disabled, .btn.voice-disabled { background: #cbd5e1 !important; color: #fff !important; cursor: not-allowed; box-shadow: none; }
+
+.btn-voice-all {
+    background: var(--gradient-accent);
+    color: #fff;
+    border: 0;
+    border-radius: 12px;
+    padding: .75rem 1rem;
+    font-weight: 600;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, .3);
+    transition: transform .15s ease;
+}
+.btn-voice-all:hover { transform: translateY(-1px); color: #fff; }
+
+@keyframes voice-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(30, 64, 175, .5); }
+    50%      { transform: scale(1.08); box-shadow: 0 0 0 18px rgba(30, 64, 175, 0); }
+}
+@keyframes voice-flash {
+    0%   { background: rgba(16, 185, 129, .25); }
+    100% { background: var(--surface); }
+}
+.voice-filled { animation: voice-flash 1.2s ease; }
+
+.voice-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .65);
+    backdrop-filter: blur(6px);
+    z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+}
+.voice-overlay-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    max-width: 320px;
+    width: 100%;
+}
+.voice-pulse {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 2.4rem;
+    margin-bottom: 1rem;
+    animation: voice-pulse 1.4s ease-in-out infinite;
+}
+.voice-text { font-weight: 600; color: var(--text); margin-bottom: .5rem; }
+
+/* ─── Jornada em andamento ────────────────────────────────── */
+.active-card {
+    background: linear-gradient(135deg, #1f2937 0%, #0f1e3a 100%);
+    color: #fff;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--accent);
+    position: relative;
+    overflow: hidden;
+}
+.active-card .label {
+    font-size: .72rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    opacity: .9;
+    font-weight: 700;
+    color: var(--accent-light);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .35rem;
+}
+.active-card .active-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+}
+.active-card .small { color: rgba(255,255,255,.75) !important; }
+.active-card .btn-success {
+    background: var(--gradient-accent);
+    border: 0;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, .35);
+}
+
+.journey-item.pending {
+    border-left-color: var(--accent);
+    background: linear-gradient(90deg, rgba(16,185,129,.06) 0%, var(--surface) 60%);
+}
+.amount-pending {
+    background: rgba(16, 185, 129, .15);
+    color: var(--accent-dark);
+    padding: .3rem .7rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: .8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border: 1px solid rgba(16, 185, 129, .3);
+}
+
+.pulse-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, .6);
+    animation: pulse-dot 1.6s infinite;
+}
+@keyframes pulse-dot {
+    0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, .6); }
+    70%  { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center" style="flex: 1;">
+            <a href="#/" class="brand text-white text-decoration-none">
+                <span class="brand-icon"><i class="bi bi-speedometer2"></i></span>
+                <span>Rota Certa</span>
+            </a>
+            <nav class="top-nav">
+                <a href="#/"          data-route="dashboard"><i class="bi bi-house-door-fill"></i> Início</a>
+                <a href="#/historico" data-route="historico"><i class="bi bi-clock-history"></i> Histórico</a>
+                <a href="#/nova"      data-route="nova"><i class="bi bi-plus-circle-fill"></i> Nova jornada</a>
+                <a href="#" id="btn-export" title="Baixar dados (JSON)"><i class="bi bi-download"></i> Exportar</a>
+                <a href="#" id="btn-import" title="Importar JSON"><i class="bi bi-upload"></i> Importar</a>
+            </nav>
+        </div>
+        <div id="topbar-action" class="d-none d-lg-block"></div>
+    </div>
+</header>
+
+<main class="container py-3 py-lg-4">
+    <div id="alerts"></div>
+    <div id="view"></div>
+</main>
+
+<nav class="bottom-nav">
+    <a href="#/"          data-route="dashboard"><i class="bi bi-house-door-fill"></i>Início</a>
+    <a href="#/historico" data-route="historico"><i class="bi bi-clock-history"></i>Histórico</a>
+    <a href="#/nova" class="add-btn">
+        <span class="add-circle"><i class="bi bi-plus-lg"></i></span>
+        Nova
+    </a>
+    <a href="#" id="btn-export-mobile"><i class="bi bi-download"></i>Exportar</a>
+</nav>
+
+<input type="file" id="import-file" accept="application/json" hidden>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/* ─── voice.js ─────────────────────────────────────────────── */
+(function () {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const supported = !!SR;
+    function setUnsupported() {
+        document.querySelectorAll('[data-voice-target], [data-voice-fill-all]').forEach(b => {
+            b.disabled = true;
+            b.title = 'Reconhecimento de voz não suportado neste navegador. Use Chrome/Edge.';
+            b.classList.add('voice-disabled');
+        });
+    }
+    function parseNumero(text) {
+        if (!text) return null;
+        let t = text.toLowerCase().trim();
+        t = t.replace(/r\$|reais|real|km|quilômetros?|quilometros?/gi, '');
+        t = t.replace(/\bvírgula\b|\bvirgula\b/g, ',');
+        t = t.replace(/\bponto\b/g, '.');
+        t = t.replace(/[^\d,.-]/g, '').trim();
+        if (!t) return null;
+        if (t.includes(',')) { t = t.replace(/\./g, '').replace(',', '.'); }
+        const n = parseFloat(t);
+        return isNaN(n) ? null : n;
+    }
+    function parseHora(text) {
+        if (!text) return null;
+        const t = text.toLowerCase().trim();
+        let m = t.match(/(\d{1,2})[:hH](\d{2})/);
+        if (m) return pad(m[1]) + ':' + pad(m[2]);
+        m = t.match(/(\d{1,2})\s*(?:horas?\s*)?(?:e\s+(meia|um quarto|\d{1,2}))?/);
+        if (m) {
+            const h = parseInt(m[1], 10);
+            let min = 0;
+            if (m[2] === 'meia') min = 30;
+            else if (m[2] === 'um quarto') min = 15;
+            else if (m[2]) min = parseInt(m[2], 10) || 0;
+            if (h >= 0 && h <= 23 && min >= 0 && min < 60) return pad(h) + ':' + pad(min);
+        }
+        return null;
+    }
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function novoReconhecimento() {
+        const r = new SR();
+        r.lang = 'pt-BR';
+        r.interimResults = false;
+        r.maxAlternatives = 1;
+        r.continuous = false;
+        return r;
+    }
+    function escutar(prompt) {
+        return new Promise((resolve, reject) => {
+            const r = novoReconhecimento();
+            const overlay = mostrarOverlay(prompt || 'Fale agora…');
+            let resolved = false;
+            r.onresult = (ev) => { resolved = true; const txt = ev.results[0][0].transcript; fecharOverlay(overlay); resolve(txt); };
+            r.onerror = (ev) => { fecharOverlay(overlay); reject(ev.error); };
+            r.onend = () => { if (!resolved) { fecharOverlay(overlay); resolve(null); } };
+            try { r.start(); } catch (e) { fecharOverlay(overlay); reject(e); }
+        });
+    }
+    function mostrarOverlay(texto) {
+        const div = document.createElement('div');
+        div.className = 'voice-overlay';
+        div.innerHTML = `
+            <div class="voice-overlay-card">
+                <div class="voice-pulse"><i class="bi bi-mic-fill"></i></div>
+                <div class="voice-text">${texto}</div>
+                <button type="button" class="btn btn-sm btn-outline-secondary mt-2 voice-cancel">Cancelar</button>
+            </div>`;
+        document.body.appendChild(div);
+        div.querySelector('.voice-cancel').addEventListener('click', () => fecharOverlay(div));
+        return div;
+    }
+    function fecharOverlay(div) { if (div && div.parentNode) div.parentNode.removeChild(div); }
+    function flashCampo(input) { input.classList.add('voice-filled'); setTimeout(() => input.classList.remove('voice-filled'), 1200); }
+    function aplicar(input, texto) {
+        if (texto == null) return false;
+        const tipo = input.dataset.voiceType || input.type || 'text';
+        if (tipo === 'number' || tipo === 'decimal') {
+            const n = parseNumero(texto);
+            if (n != null) { input.value = n; flashCampo(input); return true; }
+        } else if (tipo === 'time') {
+            const h = parseHora(texto);
+            if (h) { input.value = h; flashCampo(input); return true; }
+        } else { input.value = texto; flashCampo(input); return true; }
+        return false;
+    }
+    if (!supported) { setUnsupported(); }
+    else {
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-voice-target]');
+            if (!btn) return;
+            e.preventDefault();
+            const input = document.getElementById(btn.dataset.voiceTarget);
+            if (!input) return;
+            try {
+                const txt = await escutar(btn.dataset.voicePrompt || 'Fale o valor…');
+                if (!aplicar(input, txt)) alert('Não consegui entender. Tente novamente.');
+            } catch (err) {
+                console.warn('Voz erro:', err);
+                if (err === 'not-allowed') alert('Permissão de microfone negada.');
+            }
+        });
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-voice-fill-all]');
+            if (!btn) return;
+            e.preventDefault();
+            const sequencia = [
+                { id: 'id_data',         prompt: 'Diga a data (ou pule).',     skip: true },
+                { id: 'id_hora_inicio',  prompt: 'Hora de início. Ex: oito horas.' },
+                { id: 'id_hora_fim',     prompt: 'Hora de término.' },
+                { id: 'id_km_inicial',   prompt: 'KM inicial.' },
+                { id: 'id_km_final',     prompt: 'KM final.' },
+                { id: 'id_valor_bruto',  prompt: 'Valor bruto em reais.' },
+            ];
+            for (const passo of sequencia) {
+                const input = document.getElementById(passo.id);
+                if (!input) continue;
+                if (passo.skip && input.value) continue;
+                try {
+                    const txt = await escutar(passo.prompt);
+                    if (txt) aplicar(input, txt);
+                    await new Promise(r => setTimeout(r, 400));
+                } catch (err) { console.warn('Voz erro:', err); break; }
+            }
+        });
+    }
+    window.__voiceSupported = supported;
+})();
+
+/* ─── app.js ───────────────────────────────────────────────── */
+(function () {
+'use strict';
+
+const KEY = 'lucrometro:jornadas:v1';
+
+function load() {
+    try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : []; }
+    catch { return []; }
+}
+function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
+function nextId(list) { return list.reduce((m, j) => Math.max(m, j.id || 0), 0) + 1; }
+
+function q2(n) { return Math.round((+n || 0) * 100) / 100; }
+function totalKm(ki, kf) { const d = (+kf) - (+ki); return q2(d > 0 ? d : 0); }
+function totalHoras(hi, hf) {
+    if (!hi || !hf) return 0;
+    const [h1, m1] = hi.split(':').map(Number);
+    const [h2, m2] = hf.split(':').map(Number);
+    let mins = (h2 * 60 + m2) - (h1 * 60 + m1);
+    if (mins <= 0) mins += 24 * 60;
+    return q2(mins / 60);
+}
+function precoPorKm(valor, km)     { return km > 0 ? q2(valor / km) : 0; }
+function precoPorHora(valor, horas){ return horas > 0 ? q2(valor / horas) : 0; }
+function formatarHorasDecimais(h) {
+    const inteiro = Math.floor(h);
+    const min = Math.round((h - inteiro) * 60);
+    return `${inteiro}h ${String(min).padStart(2, '0')}min`;
+}
+function isEmAndamento(j) {
+    return !j.hora_fim || j.km_final == null || j.km_final === '' || j.valor_bruto == null || j.valor_bruto === '';
+}
+function enriquecer(j) {
+    const em_andamento = isEmAndamento(j);
+    const total_km = em_andamento ? 0 : totalKm(j.km_inicial, j.km_final);
+    const total_horas = em_andamento ? 0 : totalHoras(j.hora_inicio, j.hora_fim);
+    return { ...j, em_andamento, total_km, total_horas,
+        preco_por_km: precoPorKm(+j.valor_bruto, total_km),
+        preco_por_hora: precoPorHora(+j.valor_bruto, total_horas),
+        total_horas_formatado: formatarHorasDecimais(total_horas) };
+}
+function resumoDashboard(jornadas) {
+    let bruto = 0, km = 0, horas = 0, qtd = 0;
+    for (const j of jornadas) {
+        if (j.em_andamento) continue;
+        bruto += +j.valor_bruto || 0;
+        km    += +j.total_km    || 0;
+        horas += +j.total_horas || 0;
+        qtd++;
+    }
+    return { total_jornadas: qtd, total_bruto: q2(bruto),
+        total_km: q2(km), total_horas: q2(horas),
+        media_por_km: precoPorKm(bruto, km), media_por_hora: precoPorHora(bruto, horas) };
+}
+
+const PERIODOS = { hoje: 'Hoje', semana: 'Últimos 7 dias', mes: 'Últimos 30 dias', tudo: 'Tudo' };
+
+function filtrarPeriodo(list, periodo) {
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    function dias(n) { const d = new Date(hoje); d.setDate(d.getDate() - n); return d; }
+    return list.filter(j => {
+        if (periodo === 'tudo') return true;
+        const d = new Date(j.data + 'T00:00:00');
+        if (periodo === 'hoje')   return d.getTime() === hoje.getTime();
+        if (periodo === 'semana') return d >= dias(6);
+        if (periodo === 'mes')    return d >= dias(29);
+        return true;
+    });
+}
+
+function fmtBR(n) { return (+n).toFixed(2).replace('.', ','); }
+function fmtData(s) { const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; }
+function escapeHtml(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function todayISO() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function alerta(msg, tipo='success') {
+    const el = document.createElement('div');
+    el.className = `alert alert-${tipo} alert-dismissible fade show`;
+    el.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i>${escapeHtml(msg)}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+    document.getElementById('alerts').appendChild(el);
+    setTimeout(() => el.classList.remove('show'), 3000);
+    setTimeout(() => el.remove(), 3500);
+}
+
+function parseHash() {
+    const h = location.hash.replace(/^#/, '') || '/';
+    const parts = h.split('?')[0].split('/').filter(Boolean);
+    return { route: parts[0] || 'dashboard', param: parts[1] };
+}
+function setActiveLinks(route) {
+    document.querySelectorAll('[data-route]').forEach(a => {
+        a.classList.toggle('active', a.dataset.route === route);
+    });
+}
+
+function render() {
+    const { route, param } = parseHash();
+    const jornadas = load().map(enriquecer);
+    const view = document.getElementById('view');
+    const action = document.getElementById('topbar-action');
+    action.innerHTML = '';
+
+    if (!route || (route === 'dashboard' && !param)) {
+        renderDashboard(view, action, jornadas); setActiveLinks('dashboard');
+    } else if (route === 'historico') {
+        renderHistorico(view, action, jornadas); setActiveLinks('historico');
+    } else if (route === 'nova') {
+        renderForm(view, action, null); setActiveLinks('nova');
+    } else if (route === 'editar' && param) {
+        const j = jornadas.find(x => x.id == param);
+        if (!j) { location.hash = '#/historico'; return; }
+        renderForm(view, action, j); setActiveLinks('historico');
+    } else if (route === 'excluir' && param) {
+        const j = jornadas.find(x => x.id == param);
+        if (!j) { location.hash = '#/historico'; return; }
+        renderExcluir(view, j); setActiveLinks('historico');
+    } else { location.hash = '#/'; }
+    window.scrollTo({ top: 0, behavior: 'instant' });
+}
+window.addEventListener('hashchange', render);
+
+function renderDashboard(view, action, jornadas) {
+    const params = new URLSearchParams(location.hash.split('?')[1] || '');
+    let periodo = params.get('periodo') || 'mes';
+    if (!PERIODOS[periodo]) periodo = 'mes';
+    const filtradas = filtrarPeriodo(jornadas, periodo)
+        .sort((a, b) => (b.data + b.hora_inicio).localeCompare(a.data + a.hora_inicio));
+    const r = resumoDashboard(filtradas);
+    const ultimas = filtradas.slice(0, 6);
+    // Jornada em andamento mais recente (de toda a base, não só do período)
+    const ativa = jornadas.filter(j => j.em_andamento)
+        .sort((a, b) => (b.data + b.hora_inicio).localeCompare(a.data + a.hora_inicio))[0];
+    action.innerHTML = `<a href="#/nova" class="fab-add"><i class="bi bi-plus-lg"></i> Nova jornada</a>`;
+    view.innerHTML = `
+        ${ativa ? `
+        <div class="active-card mb-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <div class="label"><span class="pulse-dot"></span> Jornada em andamento</div>
+                    <div class="active-value">Iniciada às ${ativa.hora_inicio} · ${fmtData(ativa.data)}</div>
+                    <div class="small mt-1" style="color: var(--text-muted);">
+                        <i class="bi bi-signpost"></i> KM inicial: ${fmtBR(ativa.km_inicial)}
+                    </div>
+                </div>
+            </div>
+            <a href="#/editar/${ativa.id}" class="btn btn-success w-100">
+                <i class="bi bi-stop-circle"></i> Finalizar jornada
+            </a>
+        </div>` : ''}
+        <div class="period-filter">
+            ${Object.entries(PERIODOS).map(([k, l]) => `<a href="#/?periodo=${k}" class="chip ${periodo === k ? 'active' : ''}">${l}</a>`).join('')}
+        </div>
+        <div class="hero-card mb-3 mb-lg-4">
+            <div>
+                <div class="label">Lucro total</div>
+                <div class="value text-money">R$ ${fmtBR(r.total_bruto)}</div>
+                <div class="meta"><i class="bi bi-receipt"></i> ${r.total_jornadas} jornada${r.total_jornadas !== 1 ? 's' : ''} no período</div>
+            </div>
+            <div class="hero-card-cta d-none d-lg-block">
+                <a href="#/nova" class="btn btn-light btn-lg fw-bold" style="color: var(--primary);"><i class="bi bi-plus-lg"></i> Registrar jornada</a>
+            </div>
+        </div>
+        <div class="row g-2 g-lg-3 mb-2">
+            <div class="col-6 col-lg-3"><div class="card metric-card accent">
+                <div class="icon-pill"><i class="bi bi-clock-fill"></i></div>
+                <div class="label">Média R$/hora</div><div class="value text-money">R$ ${fmtBR(r.media_por_hora)}</div>
+            </div></div>
+            <div class="col-6 col-lg-3"><div class="card metric-card accent">
+                <div class="icon-pill"><i class="bi bi-fuel-pump-fill"></i></div>
+                <div class="label">Média R$/km</div><div class="value text-money">R$ ${fmtBR(r.media_por_km)}</div>
+            </div></div>
+            <div class="col-6 col-lg-3"><div class="card metric-card primary">
+                <div class="icon-pill"><i class="bi bi-signpost-split-fill"></i></div>
+                <div class="label">Total km</div><div class="value text-money">${fmtBR(r.total_km)}</div>
+            </div></div>
+            <div class="col-6 col-lg-3"><div class="card metric-card primary">
+                <div class="icon-pill"><i class="bi bi-hourglass-split"></i></div>
+                <div class="label">Total horas</div><div class="value text-money">${fmtBR(r.total_horas)}</div>
+            </div></div>
+        </div>
+        <div class="section-title">
+            <span>Últimas jornadas</span>
+            <a href="#/historico" class="text-decoration-none small fw-semibold" style="color: var(--primary);">Ver tudo <i class="bi bi-arrow-right"></i></a>
+        </div>
+        ${ultimas.length ? `<div class="journey-list grid">${ultimas.map(j => journeyCard(j, true)).join('')}</div>` :
+            `<div class="empty-state"><div class="empty-icon"><i class="bi bi-inbox"></i></div>
+                <p class="mb-3">Nenhuma jornada no período selecionado.</p>
+                <a href="#/nova" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Registrar jornada</a></div>`}`;
+}
+
+function journeyCard(j, clickable) {
+    const inner = j.em_andamento ? `
+        <div class="row-top">
+            <span class="date"><i class="bi bi-calendar3"></i>${fmtData(j.data)}</span>
+            <span class="amount-pending"><span class="pulse-dot"></span>Em andamento</span>
+        </div>
+        <div class="stats">
+            <span><i class="bi bi-play-circle"></i> Início: ${j.hora_inicio}</span>
+            <span><i class="bi bi-signpost"></i> KM: ${fmtBR(j.km_inicial)}</span>
+        </div>` : `
+        <div class="row-top">
+            <span class="date"><i class="bi bi-calendar3"></i>${fmtData(j.data)}</span>
+            <span class="amount text-money">R$ ${fmtBR(j.valor_bruto)}</span>
+        </div>
+        <div class="stats">
+            <span><i class="bi bi-signpost"></i> ${fmtBR(j.total_km)} km</span>
+            <span><i class="bi bi-clock"></i> ${j.total_horas_formatado}</span>
+            <span><i class="bi bi-fuel-pump"></i> R$ ${fmtBR(j.preco_por_km)}/km</span>
+            <span><i class="bi bi-cash-coin"></i> R$ ${fmtBR(j.preco_por_hora)}/h</span>
+        </div>`;
+    const cls = `journey-item${j.em_andamento ? ' pending' : ''}`;
+    return clickable
+        ? `<a href="#/editar/${j.id}" class="${cls}">${inner}</a>`
+        : `<div class="${cls}" style="cursor:default;">${inner}</div>`;
+}
+
+function renderHistorico(view, action, jornadas) {
+    action.innerHTML = `<a href="#/nova" class="fab-add"><i class="bi bi-plus-lg"></i> Nova jornada</a>`;
+    const sorted = jornadas.sort((a, b) => (b.data + b.hora_inicio).localeCompare(a.data + a.hora_inicio));
+    view.innerHTML = `
+        <div class="section-title">
+            <span>Todas as jornadas</span>
+            <span class="badge rounded-pill" style="background: var(--gradient-primary);">${sorted.length}</span>
+        </div>
+        ${sorted.length ? `<div class="journey-list grid">${sorted.map(j => `
+            <div class="journey-item${j.em_andamento ? ' pending' : ''}" style="cursor: default;">
+                <div class="row-top">
+                    <span class="date"><i class="bi bi-calendar3"></i>${fmtData(j.data)}</span>
+                    ${j.em_andamento
+                        ? `<span class="amount-pending"><span class="pulse-dot"></span>Em andamento</span>`
+                        : `<span class="amount text-money">R$ ${fmtBR(j.valor_bruto)}</span>`}
+                </div>
+                ${j.em_andamento ? `
+                    <div class="stats mb-2">
+                        <span><i class="bi bi-play-circle"></i> Início: ${j.hora_inicio}</span>
+                        <span><i class="bi bi-signpost"></i> KM inicial: ${fmtBR(j.km_inicial)}</span>
+                    </div>
+                ` : `
+                    <div class="stats mb-2">
+                        <span><i class="bi bi-clock"></i> ${j.hora_inicio} – ${j.hora_fim}</span>
+                        <span><i class="bi bi-hourglass"></i> ${j.total_horas_formatado}</span>
+                        <span><i class="bi bi-signpost"></i> ${fmtBR(j.total_km)} km</span>
+                        <span><i class="bi bi-fuel-pump"></i> R$ ${fmtBR(j.preco_por_km)}/km</span>
+                        <span style="grid-column: span 2;"><i class="bi bi-cash-coin"></i> R$ ${fmtBR(j.preco_por_hora)}/h</span>
+                    </div>
+                `}
+                <div class="d-flex gap-2 mt-2">
+                    <a href="#/editar/${j.id}" class="btn btn-sm ${j.em_andamento ? 'btn-success' : 'btn-outline-primary'} flex-fill">
+                        <i class="bi bi-${j.em_andamento ? 'stop-circle' : 'pencil'}"></i> ${j.em_andamento ? 'Finalizar' : 'Editar'}
+                    </a>
+                    <a href="#/excluir/${j.id}" class="btn btn-sm btn-outline-danger flex-fill"><i class="bi bi-trash"></i> Excluir</a>
+                </div>
+            </div>`).join('')}</div>` :
+            `<div class="empty-state"><div class="empty-icon"><i class="bi bi-inbox"></i></div>
+                <p class="mb-3">Nenhuma jornada registrada ainda.</p>
+                <a href="#/nova" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Registrar a primeira</a></div>`}`;
+}
+
+function renderForm(view, action, jornada) {
+    const editando = !!jornada;
+    const j = jornada || { data: todayISO(), hora_inicio: '', hora_fim: '', km_inicial: '', km_final: '', valor_bruto: '' };
+    view.innerHTML = `
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="section-title"><span>${editando ? 'Editar jornada' : 'Registrar nova jornada'}</span></div>
+                <button type="button" class="btn-voice-all mb-3" data-voice-fill-all>
+                    <i class="bi bi-mic-fill"></i> Preencher tudo por voz
+                </button>
+                <div class="card p-3 p-md-4 p-lg-5">
+                    <form id="form-jornada">
+                        <div class="form-desktop-grid">
+                            <div class="mb-3 form-full">
+                                <label for="id_data" class="form-label"><i class="bi bi-calendar3"></i> Data</label>
+                                <input type="date" id="id_data" name="data" class="form-control form-control-lg" required value="${j.data}">
+                            </div>
+                            ${campoTime('hora_inicio', 'Início', 'play-circle', j.hora_inicio, 'Hora de início. Ex: oito horas.', true)}
+                            ${campoTime('hora_fim', 'Término', 'stop-circle', j.hora_fim, 'Hora de término.', false)}
+                            ${campoNumero('km_inicial', 'KM inicial', 'signpost', j.km_inicial, '0.1', 'KM inicial.', true)}
+                            ${campoNumero('km_final', 'KM final', 'signpost-fill', j.km_final, '0.1', 'KM final.', false)}
+                            <div class="mb-4 form-full">
+                                <label for="id_valor_bruto" class="form-label"><i class="bi bi-cash-coin"></i> Valor bruto (R$) <small class="text-muted fw-normal">(opcional)</small></label>
+                                <div class="input-with-mic">
+                                    <input type="number" id="id_valor_bruto" name="valor_bruto" class="form-control form-control-lg"
+                                           inputmode="decimal" step="0.01" min="0" value="${j.valor_bruto ?? ''}" placeholder="Ex.: 250.00">
+                                    <button type="button" class="mic-btn" data-voice-target="id_valor_bruto" data-voice-type="number"
+                                            data-voice-prompt="Valor bruto em reais." aria-label="Ditar valor"><i class="bi bi-mic-fill"></i></button>
+                                </div>
+                                <div class="small text-muted mt-2">
+                                    <i class="bi bi-info-circle"></i>
+                                    Você pode salvar agora só com data, hora de início e KM inicial. Os demais campos podem ser preenchidos quando terminar a jornada.
+                                </div>
+                            </div>
+                        </div>
+                        <div id="form-errors"></div>
+                        <div class="d-flex flex-column flex-lg-row gap-2 justify-content-lg-end">
+                            <a href="${editando ? '#/historico' : '#/'}" class="btn btn-outline-secondary order-lg-1">Cancelar</a>
+                            <button type="submit" class="btn btn-success btn-lg order-lg-2 px-lg-5">
+                                <i class="bi bi-check-lg"></i>
+                                ${editando && jornada.em_andamento ? 'Finalizar jornada'
+                                    : editando ? 'Atualizar jornada'
+                                    : 'Salvar jornada'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>`;
+    document.getElementById('form-jornada').addEventListener('submit', e => {
+        e.preventDefault();
+        const hora_fim_raw = byId('id_hora_fim').value;
+        const km_final_raw = byId('id_km_final').value;
+        const valor_raw    = byId('id_valor_bruto').value;
+        const data = {
+            data: byId('id_data').value,
+            hora_inicio: byId('id_hora_inicio').value,
+            hora_fim: hora_fim_raw || null,
+            km_inicial: parseFloat(byId('id_km_inicial').value),
+            km_final: km_final_raw === '' ? null : parseFloat(km_final_raw),
+            valor_bruto: valor_raw === '' ? null : parseFloat(valor_raw),
+        };
+        const errors = validar(data);
+        const errBox = byId('form-errors');
+        if (errors.length) {
+            errBox.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>${errors.join('<br>')}</div>`;
+            return;
+        }
+        errBox.innerHTML = '';
+        const list = load();
+        const concluida = data.hora_fim && data.km_final != null && data.valor_bruto != null;
+        const msg = editando
+            ? (concluida ? 'Jornada finalizada!' : 'Jornada atualizada.')
+            : (concluida ? 'Jornada registrada com sucesso!' : 'Jornada iniciada! Finalize quando parar de trabalhar.');
+        if (editando) {
+            const idx = list.findIndex(x => x.id === jornada.id);
+            list[idx] = { id: jornada.id, ...data };
+        } else {
+            list.push({ id: nextId(list), ...data });
+        }
+        save(list); alerta(msg); location.hash = concluida ? '#/' : '#/historico';
+    });
+}
+
+function campoTime(name, label, icon, val, prompt, required) {
+    return `
+        <div class="mb-3">
+            <label for="id_${name}" class="form-label"><i class="bi bi-${icon}"></i> ${label}${required ? '' : ' <small class="text-muted fw-normal">(opcional)</small>'}</label>
+            <div class="input-with-mic">
+                <input type="time" id="id_${name}" name="${name}" class="form-control form-control-lg" ${required ? 'required' : ''} value="${val || ''}">
+                <button type="button" class="mic-btn" data-voice-target="id_${name}" data-voice-type="time"
+                        data-voice-prompt="${prompt}" aria-label="Ditar ${label}"><i class="bi bi-mic-fill"></i></button>
+            </div>
+        </div>`;
+}
+function campoNumero(name, label, icon, val, step, prompt, required) {
+    return `
+        <div class="mb-3">
+            <label for="id_${name}" class="form-label"><i class="bi bi-${icon}"></i> ${label}${required ? '' : ' <small class="text-muted fw-normal">(opcional)</small>'}</label>
+            <div class="input-with-mic">
+                <input type="number" id="id_${name}" name="${name}" class="form-control form-control-lg"
+                       inputmode="decimal" step="${step}" min="0" ${required ? 'required' : ''} value="${val ?? ''}" placeholder="Ex.: 12345">
+                <button type="button" class="mic-btn" data-voice-target="id_${name}" data-voice-type="number"
+                        data-voice-prompt="${prompt}" aria-label="Ditar ${label}"><i class="bi bi-mic-fill"></i></button>
+            </div>
+        </div>`;
+}
+function byId(id) { return document.getElementById(id); }
+
+function validar(d) {
+    const erros = [];
+    if (!d.data) erros.push('Informe a data.');
+    if (!d.hora_inicio) erros.push('Informe a hora de início.');
+    if (isNaN(d.km_inicial)) erros.push('Informe o KM inicial.');
+    // hora_fim, km_final e valor_bruto são opcionais (jornada em andamento)
+    if (d.km_final != null && !isNaN(d.km_final) && d.km_final < d.km_inicial) erros.push('KM final não pode ser menor que KM inicial.');
+    if (d.valor_bruto != null && !isNaN(d.valor_bruto) && d.valor_bruto < 0) erros.push('Valor bruto não pode ser negativo.');
+    return erros;
+}
+
+function renderExcluir(view, j) {
+    view.innerHTML = `
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8 col-xl-6">
+                <div class="section-title"><span>Confirmar exclusão</span></div>
+                <div class="alert alert-warning"><i class="bi bi-exclamation-triangle-fill me-2"></i>Esta ação não pode ser desfeita.</div>
+                ${journeyCard(j, false)}
+                <div class="d-grid gap-2 mt-3">
+                    <button id="btn-confirm-delete" class="btn btn-danger btn-lg"><i class="bi bi-trash"></i> Confirmar exclusão</button>
+                    <a href="#/historico" class="btn btn-outline-secondary">Cancelar</a>
+                </div>
+            </div>
+        </div>`;
+    document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+        const list = load().filter(x => x.id !== j.id);
+        save(list); alerta('Jornada excluída.'); location.hash = '#/historico';
+    });
+}
+
+function exportar() {
+    const blob = new Blob([JSON.stringify(load(), null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `rota-certa-${todayISO()}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+function importar(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+        try {
+            const arr = JSON.parse(reader.result);
+            if (!Array.isArray(arr)) throw new Error('Formato inválido');
+            save(arr); alerta(`Importadas ${arr.length} jornadas.`); render();
+        } catch (e) { alerta('Arquivo inválido.', 'danger'); }
+    };
+    reader.readAsText(file);
+}
+document.getElementById('btn-export').addEventListener('click', e => { e.preventDefault(); exportar(); });
+document.getElementById('btn-export-mobile').addEventListener('click', e => { e.preventDefault(); exportar(); });
+document.getElementById('btn-import').addEventListener('click', e => { e.preventDefault(); document.getElementById('import-file').click(); });
+document.getElementById('import-file').addEventListener('change', e => { if (e.target.files[0]) importar(e.target.files[0]); });
+
+if (!localStorage.getItem(KEY)) {
+    const hoje = new Date();
+    const seed = [
+        [0, '07:00', '15:30', 45000.0, 45198.5, 285.50],
+        [1, '06:30', '14:00', 44800.2, 45000.0, 240.00],
+        [2, '18:00', '02:30', 44600.0, 44800.2, 320.75],
+        [4, '08:00', '17:00', 44400.0, 44600.0, 295.00],
+        [6, '07:15', '16:45', 44200.0, 44400.0, 310.20],
+        [10,'09:00', '18:30', 43950.0, 44200.0, 275.50],
+    ].map((row, i) => {
+        const d = new Date(hoje); d.setDate(d.getDate() - row[0]);
+        return { id: i + 1, data: d.toISOString().slice(0, 10),
+            hora_inicio: row[1], hora_fim: row[2],
+            km_inicial: row[3], km_final: row[4], valor_bruto: row[5] };
+    });
+    save(seed);
+}
+
+render();
+})();
+
+/* ─── PWA: registra service worker ─────────────────────────── */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW falhou:', err));
+    });
+}
+</script>
+</body>
+</html>

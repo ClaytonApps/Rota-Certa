@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1e3a">
+<title>Rota Certa · Sua jornada lucrativa começa aqui</title>
+<meta name="description" content="Calcule a rentabilidade real das suas jornadas. Descubra quanto ganha por hora, por km e onde está o seu lucro.">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary: #0f1e3a;
+    --primary-dark: #0a1628;
+    --gray-dark: #1f2937;
+    --gray: #374151;
+    --gray-light: #6b7280;
+    --accent: #10b981;
+    --accent-dark: #059669;
+    --accent-light: #34d399;
+    --bg: #f3f4f6;
+    --surface: #ffffff;
+    --border: #d1d5db;
+    --text: #111827;
+    --text-muted: #4b5563;
+    --gradient-primary: linear-gradient(135deg, #0f1e3a 0%, #1f2937 100%);
+    --gradient-accent: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    --gradient-mix: linear-gradient(135deg, #0f1e3a 0%, #10b981 100%);
+}
+
+* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+.nav-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(15, 30, 58, .85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: .9rem 1.25rem;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.15rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    letter-spacing: .3px;
+}
+.logo-mark {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--gradient-accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, .35);
+}
+.nav-links { display: none; gap: 1.75rem; }
+.nav-links a {
+    color: rgba(255,255,255,.75);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: .92rem;
+    transition: color .15s ease;
+}
+.nav-links a:hover { color: #fff; }
+.btn-cta {
+    background: var(--gradient-accent);
+    color: #fff;
+    border: 0;
+    border-radius: 999px;
+    padding: .55rem 1.15rem;
+    font-weight: 700;
+    font-size: .9rem;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, .35);
+    transition: transform .15s ease, box-shadow .15s ease;
+    display: inline-flex; align-items: center; gap: .4rem;
+}
+.btn-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(16, 185, 129, .45); color: #fff; }
+@media (min-width: 900px) {
+    .nav-links { display: flex; }
+}
+
+/* ─── HERO ────────────────────────────────────────────────── */
+.hero {
+    background: var(--gradient-primary);
+    color: #fff;
+    padding: 7rem 1.25rem 4rem;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 80% 20%, rgba(16,185,129,.18) 0%, transparent 50%),
+        radial-gradient(circle at 10% 80%, rgba(59,130,246,.10) 0%, transparent 50%);
+    pointer-events: none;
+}
+.hero-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: rgba(16, 185, 129, .15);
+    color: var(--accent-light);
+    padding: .35rem .9rem;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .5px;
+    border: 1px solid rgba(16, 185, 129, .3);
+    margin-bottom: 1.25rem;
+}
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin: 0 0 1.25rem;
+}
+.hero h1 .grad {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.hero p.lead {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,.78);
+    max-width: 540px;
+    margin: 0 0 2rem;
+}
+.hero-ctas { display: flex; gap: .75rem; flex-wrap: wrap; }
+.btn-hero-primary {
+    background: var(--gradient-accent);
+    color: #fff;
+    border: 0;
+    border-radius: 14px;
+    padding: 1rem 1.75rem;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, .35);
+    transition: transform .15s ease, box-shadow .15s ease;
+    display: inline-flex; align-items: center; gap: .55rem;
+}
+.btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(16, 185, 129, .45); color: #fff; }
+.btn-hero-secondary {
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,.18);
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background .15s ease, border-color .15s ease;
+    display: inline-flex; align-items: center; gap: .5rem;
+}
+.btn-hero-secondary:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.3); color: #fff; }
+.hero-stats {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+}
+.hero-stats .stat .num {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--accent-light);
+    line-height: 1;
+}
+.hero-stats .stat .label {
+    font-size: .8rem;
+    color: rgba(255,255,255,.6);
+    margin-top: .25rem;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* Mockup do celular */
+.phone {
+    width: 280px;
+    margin: 0 auto;
+    background: #0a1628;
+    border-radius: 36px;
+    padding: 12px;
+    box-shadow: 0 30px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
+    transform: rotate(-3deg);
+    transition: transform .4s ease;
+}
+.phone:hover { transform: rotate(0deg); }
+.phone-screen {
+    background: #f3f4f6;
+    border-radius: 26px;
+    overflow: hidden;
+    aspect-ratio: 9 / 19;
+    position: relative;
+}
+.phone-notch {
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 90px; height: 22px;
+    background: #0a1628;
+    border-radius: 999px;
+    z-index: 5;
+}
+.mockbar {
+    background: var(--gradient-primary);
+    color: #fff;
+    padding: 2.4rem .8rem .65rem;
+    display: flex; align-items: center; gap: .4rem;
+}
+.mockbar-dot {
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    background: rgba(255,255,255,.2);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .65rem;
+}
+.mockbar-text { font-weight: 700; font-size: .8rem; }
+.mockbar-sub { font-size: .55rem; opacity: .7; letter-spacing: 1px; text-transform: uppercase; }
+.mock-content { padding: .7rem; }
+.mock-hero {
+    background: var(--gradient-mix);
+    color: #fff;
+    border-radius: 12px;
+    padding: .8rem;
+    box-shadow: 0 4px 12px rgba(15,30,58,.25);
+}
+.mock-hero .mh-label { font-size: .55rem; text-transform: uppercase; letter-spacing: 1px; opacity: .85; font-weight: 600; }
+.mock-hero .mh-value { font-size: 1.4rem; font-weight: 800; letter-spacing: -.5px; }
+.mock-hero .mh-meta { font-size: .55rem; opacity: .75; }
+.mock-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .4rem;
+    margin-top: .5rem;
+}
+.mock-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: .55rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.mock-card .mc-label {
+    font-size: .5rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+.mock-card .mc-value {
+    font-size: .85rem;
+    font-weight: 800;
+    color: var(--accent-dark);
+    margin-top: .15rem;
+}
+.mock-card.primary .mc-value { color: var(--primary); }
+.mock-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .2rem;
+    background: rgba(16, 185, 129, .12);
+    color: var(--accent-dark);
+    border-radius: 6px;
+    padding: 2px 5px;
+    font-size: .55rem;
+    font-weight: 700;
+    margin-bottom: .25rem;
+}
+.mock-list { margin-top: .5rem; display: flex; flex-direction: column; gap: .3rem; }
+.mock-item {
+    background: #fff;
+    border-left: 3px solid var(--primary);
+    border-radius: 8px;
+    padding: .45rem .55rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+.mock-item.pending { border-left-color: var(--accent); background: linear-gradient(90deg, rgba(16,185,129,.06), #fff 60%); }
+.mock-item-row { display: flex; justify-content: space-between; align-items: center; }
+.mock-item-date { font-size: .55rem; font-weight: 700; }
+.mock-item-amount {
+    background: var(--gradient-accent);
+    color: #fff;
+    border-radius: 999px;
+    padding: 1px 6px;
+    font-size: .55rem;
+    font-weight: 700;
+}
+.mock-item-pending {
+    background: rgba(16, 185, 129, .15);
+    color: var(--accent-dark);
+    border-radius: 999px;
+    padding: 1px 6px;
+    font-size: .5rem;
+    font-weight: 700;
+    border: 1px solid rgba(16, 185, 129, .3);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+.mock-dot {
+    width: 5px; height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, .6);
+    animation: pulse 1.6s infinite;
+}
+@keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, .6); }
+    70%  { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+}
+.mock-item-stats {
+    display: flex; gap: .5rem;
+    font-size: .5rem;
+    color: var(--text-muted);
+    margin-top: .15rem;
+}
+
+@media (min-width: 900px) {
+    .hero { padding: 9rem 2rem 6rem; }
+    .hero-grid { grid-template-columns: 1.1fr 1fr; }
+    .hero h1 { font-size: 3.5rem; }
+    .phone { transform: rotate(4deg); }
+}
+
+/* ─── FEATURES ────────────────────────────────────────────── */
+.section {
+    padding: 5rem 1.25rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.section-head { text-align: center; margin-bottom: 3rem; }
+.section-head .eyebrow-light {
+    background: rgba(15, 30, 58, .08);
+    color: var(--primary);
+    border: 1px solid rgba(15, 30, 58, .15);
+    padding: .35rem .9rem;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+.section-head h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -.5px;
+    margin: 0 0 .75rem;
+}
+.section-head p {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 620px;
+    margin: 0 auto;
+}
+@media (min-width: 768px) {
+    .section-head h2 { font-size: 2.5rem; }
+}
+
+.features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+.feature {
+    background: #fff;
+    border-radius: 18px;
+    padding: 1.75rem;
+    box-shadow: 0 1px 3px rgba(15, 30, 58, .04);
+    transition: transform .2s ease, box-shadow .2s ease;
+    border: 1px solid var(--border);
+}
+.feature:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(15, 30, 58, .1); }
+.feature-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+}
+.feature.accent .feature-icon { background: var(--gradient-accent); }
+.feature h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 .5rem;
+    color: var(--text);
+}
+.feature p { color: var(--text-muted); margin: 0; font-size: .95rem; }
+@media (min-width: 700px)  { .features { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .features { grid-template-columns: repeat(3, 1fr); } }
+
+/* ─── COMO FUNCIONA ───────────────────────────────────────── */
+.steps {
+    background: linear-gradient(180deg, #fff 0%, #f9fafb 100%);
+    padding: 5rem 1.25rem;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+.steps-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    counter-reset: step;
+}
+.step {
+    background: #fff;
+    border-radius: 18px;
+    padding: 2rem;
+    border: 1px solid var(--border);
+    position: relative;
+    counter-increment: step;
+}
+.step::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    top: 1.5rem; right: 1.5rem;
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: rgba(15, 30, 58, .08);
+    letter-spacing: -2px;
+}
+.step .step-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: rgba(16, 185, 129, .12);
+    color: var(--accent-dark);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+.step h3 { font-size: 1.2rem; font-weight: 700; margin: 0 0 .5rem; }
+.step p { color: var(--text-muted); margin: 0; }
+@media (min-width: 800px) { .steps-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ─── APOIE ───────────────────────────────────────────────── */
+.support {
+    padding: 5rem 1.25rem;
+    background: var(--bg);
+}
+.support-card {
+    max-width: 880px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(15, 30, 58, .08);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+.support-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: var(--gradient-accent);
+}
+.support-icon {
+    width: 80px; height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 24px;
+    background: var(--gradient-accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 2.2rem;
+    box-shadow: 0 12px 28px rgba(16, 185, 129, .35);
+    transform: rotate(-6deg);
+    transition: transform .3s ease;
+}
+.support-card:hover .support-icon { transform: rotate(0deg) scale(1.05); }
+.support-card .eyebrow-light {
+    background: rgba(16, 185, 129, .12);
+    color: var(--accent-dark);
+    border-color: rgba(16, 185, 129, .3);
+}
+.support-card h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.25;
+    margin: .5rem 0 1rem;
+    letter-spacing: -.5px;
+}
+.support-card .quote {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    line-height: 1.65;
+}
+.support-card .quote strong { color: var(--text); }
+.btn-support {
+    background: var(--gradient-accent);
+    color: #fff;
+    border: 0;
+    border-radius: 16px;
+    padding: 1.1rem 2rem;
+    font-weight: 800;
+    font-size: 1.05rem;
+    text-decoration: none;
+    box-shadow: 0 10px 28px rgba(16, 185, 129, .4);
+    display: inline-flex; align-items: center; gap: .7rem;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-support:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px rgba(16, 185, 129, .5);
+    color: #fff;
+}
+.btn-support .mp-logo {
+    background: #fff;
+    color: var(--accent-dark);
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+}
+.support-note {
+    margin-top: 1.5rem;
+    font-size: .85rem;
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+@media (min-width: 768px) {
+    .support-card { padding: 4rem 3rem; }
+    .support-card h2 { font-size: 2.25rem; }
+}
+
+/* ─── CTA FINAL ───────────────────────────────────────────── */
+.cta-final {
+    background: var(--gradient-mix);
+    color: #fff;
+    padding: 5rem 1.25rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.cta-final::after {
+    content: '';
+    position: absolute;
+    top: -40%; right: -10%;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+.cta-final h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -.5px;
+    margin: 0 0 1rem;
+    position: relative;
+}
+.cta-final p { color: rgba(255,255,255,.85); max-width: 560px; margin: 0 auto 2rem; position: relative; }
+.cta-final .btn-hero-primary { background: #fff; color: var(--primary); }
+.cta-final .btn-hero-primary:hover { background: #f3f4f6; color: var(--primary); }
+@media (min-width: 768px) { .cta-final h2 { font-size: 2.6rem; } }
+
+/* ─── FOOTER ──────────────────────────────────────────────── */
+footer {
+    background: var(--primary-dark);
+    color: rgba(255,255,255,.6);
+    padding: 2.5rem 1.25rem;
+    text-align: center;
+    font-size: .9rem;
+}
+footer .logo { color: #fff; margin-bottom: .75rem; display: inline-flex; }
+footer a { color: var(--accent-light); text-decoration: none; }
+footer a:hover { color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<div class="nav-wrap">
+    <nav class="nav">
+        <a href="#" class="logo">
+            <span class="logo-mark"><i class="bi bi-speedometer2"></i></span>
+            Rota Certa
+        </a>
+        <div class="nav-links">
+            <a href="#features">Recursos</a>
+            <a href="#como-funciona">Como funciona</a>
+            <a href="#apoiar">Apoiar</a>
+            <a href="#instalar">Instalar</a>
+        </div>
+        <a href="app.html" class="btn-cta">
+            <i class="bi bi-box-arrow-in-right"></i> Abrir app
+        </a>
+    </nav>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-grid">
+        <div>
+            <span class="eyebrow"><i class="bi bi-stars"></i> Sem servidor · 100% no celular</span>
+            <h1>Saiba quanto você <span class="grad">realmente lucra</span> em cada jornada.</h1>
+            <p class="lead">
+                Registre o início da viagem, finalize quando parar e veja na hora seu R$ por hora,
+                R$ por km e o lucro total. Tudo offline, com voz em português, e direto na palma da mão.
+            </p>
+            <div class="hero-ctas">
+                <a href="app.html" class="btn-hero-primary">
+                    <i class="bi bi-rocket-takeoff-fill"></i> Começar agora
+                </a>
+                <a href="#instalar" class="btn-hero-secondary">
+                    <i class="bi bi-phone"></i> Instalar no celular
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="num">R$/h</div>
+                    <div class="label">Por hora rodada</div>
+                </div>
+                <div class="stat">
+                    <div class="num">R$/km</div>
+                    <div class="label">Por km percorrido</div>
+                </div>
+                <div class="stat">
+                    <div class="num">100%</div>
+                    <div class="label">Offline · Privado</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mockup do celular -->
+        <div>
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="phone-notch"></div>
+                    <div class="mockbar">
+                        <span class="mockbar-dot"><i class="bi bi-speedometer2"></i></span>
+                        <div>
+                            <div class="mockbar-text">Rota Certa</div>
+                            <div class="mockbar-sub">Dashboard</div>
+                        </div>
+                    </div>
+                    <div class="mock-content">
+                        <div class="mock-hero">
+                            <div class="mh-label">Lucro total</div>
+                            <div class="mh-value">R$ 1.726,95</div>
+                            <div class="mh-meta">6 jornadas · últimos 30 dias</div>
+                        </div>
+                        <div class="mock-grid">
+                            <div class="mock-card"><div class="mc-label">R$/hora</div><div class="mc-value">R$ 32,94</div></div>
+                            <div class="mock-card"><div class="mc-label">R$/km</div><div class="mc-value">R$ 1,33</div></div>
+                            <div class="mock-card primary"><div class="mc-label">Total km</div><div class="mc-value">1.448</div></div>
+                            <div class="mock-card primary"><div class="mc-label">Total horas</div><div class="mc-value">58,5</div></div>
+                        </div>
+                        <div class="mock-list">
+                            <div class="mock-item pending">
+                                <div class="mock-item-row">
+                                    <span class="mock-item-date"><i class="bi bi-calendar3"></i> Hoje</span>
+                                    <span class="mock-item-pending"><span class="mock-dot"></span>Em andamento</span>
+                                </div>
+                            </div>
+                            <div class="mock-item">
+                                <div class="mock-item-row">
+                                    <span class="mock-item-date">09/05</span>
+                                    <span class="mock-item-amount">R$ 285,50</span>
+                                </div>
+                                <div class="mock-item-stats">
+                                    <span>198 km</span><span>8h 30</span><span>R$ 1,44/km</span>
+                                </div>
+                            </div>
+                            <div class="mock-item">
+                                <div class="mock-item-row">
+                                    <span class="mock-item-date">08/05</span>
+                                    <span class="mock-item-amount">R$ 240,00</span>
+                                </div>
+                                <div class="mock-item-stats">
+                                    <span>199 km</span><span>7h 30</span><span>R$ 1,20/km</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="section" id="features">
+    <div class="section-head">
+        <span class="eyebrow-light">Tudo que o motorista precisa</span>
+        <h2>Construído para quem dirige, não para quem programa.</h2>
+        <p>Direto ao ponto, sem cadastro, sem mensalidade. Abriu, registrou, sabe o quanto está ganhando.</p>
+    </div>
+
+    <div class="features">
+        <div class="feature accent">
+            <div class="feature-icon"><i class="bi bi-mic-fill"></i></div>
+            <h3>Preencha por voz</h3>
+            <p>Diga "doze mil quilômetros" ou "duzentos e cinquenta reais" e o app entende. Sem digitar enquanto dirige.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><i class="bi bi-play-circle-fill"></i></div>
+            <h3>Inicie e finalize</h3>
+            <p>Antes de sair: data, hora e KM inicial. Quando parar: complete e veja seu lucro calculado.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <h3>Métricas reais</h3>
+            <p>R$/hora e R$/km calculados de forma ponderada — não médias enganosas. Saiba se a noite vale mais que o dia.</p>
+        </div>
+        <div class="feature accent">
+            <div class="feature-icon"><i class="bi bi-wifi-off"></i></div>
+            <h3>Funciona offline</h3>
+            <p>Instale como app no celular e use mesmo sem sinal. Os dados ficam salvos no seu aparelho.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><i class="bi bi-shield-lock-fill"></i></div>
+            <h3>Privado por design</h3>
+            <p>Nada vai pra nuvem. Sem cadastro, sem rastreio. Seus números são seus.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><i class="bi bi-cloud-arrow-down-fill"></i></div>
+            <h3>Backup em 1 clique</h3>
+            <p>Exporte tudo em JSON quando quiser, importe em outro celular. Você no controle.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Como funciona -->
+<section class="steps" id="como-funciona">
+    <div class="section-head">
+        <span class="eyebrow-light">Como funciona</span>
+        <h2>Em três passos. Sem mistério.</h2>
+    </div>
+    <div class="steps-grid">
+        <div class="step">
+            <div class="step-icon"><i class="bi bi-play-fill"></i></div>
+            <h3>Inicie a jornada</h3>
+            <p>Abra o app, toque em "Nova" e preencha apenas data, hora de início e KM inicial. Salve e vá trabalhar.</p>
+        </div>
+        <div class="step">
+            <div class="step-icon"><i class="bi bi-stop-fill"></i></div>
+            <h3>Finalize quando parar</h3>
+            <p>Ao terminar o turno, abra o card "Em andamento" no dashboard, complete hora final, KM final e o valor recebido.</p>
+        </div>
+        <div class="step">
+            <div class="step-icon"><i class="bi bi-bar-chart-fill"></i></div>
+            <h3>Acompanhe o lucro</h3>
+            <p>Veja imediatamente seu R$/h, R$/km e o lucro total. Filtre por hoje, semana, mês ou tudo.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Apoie o projeto -->
+<section class="support" id="apoiar">
+    <div class="support-card">
+        <div class="support-icon"><i class="bi bi-heart-fill"></i></div>
+        <span class="eyebrow-light"><i class="bi bi-stars"></i> Feito por gente como você</span>
+        <h2>Cada km que você roda nos move a continuar.</h2>
+        <p class="quote">
+            O <strong>Rota Certa</strong> nasceu para ser <strong>gratuito, sem anúncios e sem rastreio</strong>.
+            Se ele te ajudou a saber quanto vale a sua hora ao volante, considere apoiar com o que puder.
+            Seu gesto mantém o projeto vivo e independente — e ajuda a chegar até o próximo motorista que precisa.
+        </p>
+        <a href="https://mpago.la/2z5Uj6E" target="_blank" rel="noopener" class="btn-support">
+            <span class="mp-logo"><i class="bi bi-cash-coin"></i></span>
+            Apoiar via Mercado Pago
+            <i class="bi bi-arrow-right"></i>
+        </a>
+        <div class="support-note">
+            <i class="bi bi-shield-check"></i> Pagamento seguro · Qualquer valor faz diferença
+        </div>
+    </div>
+</section>
+
+<!-- CTA final -->
+<section class="cta-final" id="instalar">
+    <h2>Pronto pra saber quanto você ganha de verdade?</h2>
+    <p>Abra o app no navegador ou instale como aplicativo no celular. Sem cadastro, sem cartão, sem espera.</p>
+    <div class="hero-ctas" style="justify-content: center;">
+        <a href="app.html" class="btn-hero-primary">
+            <i class="bi bi-rocket-takeoff-fill"></i> Abrir Rota Certa
+        </a>
+        <a href="pwa/" class="btn-hero-secondary">
+            <i class="bi bi-download"></i> Instalar PWA
+        </a>
+    </div>
+</section>
+
+<footer>
+    <a href="#" class="logo">
+        <span class="logo-mark"><i class="bi bi-speedometer2"></i></span>
+        Rota Certa
+    </a>
+    <p style="margin: 0;">Calculadora de rentabilidade para motoristas · Feito com <i class="bi bi-heart-fill" style="color: #ef4444;"></i> para quem está na rua.</p>
+</footer>
+
+</body>
+</html>

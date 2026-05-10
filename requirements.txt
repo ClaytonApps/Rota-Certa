@@ -1,0 +1,4 @@
+Django>=5.0,<5.2
+python-decouple>=3.8
+# Firebase (para integração futura)
+firebase-admin>=6.5.0
