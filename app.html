@@ -866,6 +866,227 @@ main.container { max-width: 1180px; }
     transition: all .15s ease;
 }
 .btn-export-trigger:hover { border-color: var(--primary); background: rgba(15, 30, 58, .04); color: var(--primary); }
+
+/* ─── Tela "Sobre" / Demonstração in-app ──────────────────── */
+.sobre-hero {
+    background: var(--gradient-mix);
+    color: #fff;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+.sobre-hero::after {
+    content: '';
+    position: absolute;
+    right: -50px; top: -50px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(255,255,255,.16) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+.sobre-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    background: rgba(16, 185, 129, .2);
+    color: var(--accent-light);
+    padding: .3rem .8rem;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    border: 1px solid rgba(16, 185, 129, .35);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+.sobre-hero h1 {
+    font-size: 1.7rem;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -.5px;
+    margin: 0 0 .75rem;
+    position: relative;
+}
+.sobre-hero h1 .grad-text {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.sobre-hero p.lead {
+    color: rgba(255,255,255,.85);
+    margin: 0 0 1.5rem;
+    font-size: .95rem;
+    position: relative;
+}
+.sobre-cta-row {
+    display: flex;
+    gap: .6rem;
+    flex-wrap: wrap;
+    position: relative;
+}
+.sobre-cta-primary {
+    background: #fff !important;
+    color: var(--primary) !important;
+    border: 0 !important;
+    font-weight: 800;
+    box-shadow: 0 6px 16px rgba(0,0,0,.18);
+}
+.sobre-cta-secondary {
+    background: rgba(255,255,255,.1) !important;
+    border: 1.5px solid rgba(255,255,255,.3) !important;
+    color: #fff !important;
+}
+.sobre-cta-secondary:hover { background: rgba(255,255,255,.18) !important; }
+.sobre-mini-stats {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255,255,255,.15);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    position: relative;
+}
+.sobre-mini-stats > div { text-align: center; }
+.sobre-mini-stats strong {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--accent-light);
+    line-height: 1;
+}
+.sobre-mini-stats small {
+    display: block;
+    font-size: .7rem;
+    color: rgba(255,255,255,.65);
+    margin-top: .35rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 600;
+}
+
+.sobre-features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+.sobre-feature {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.sobre-feature:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.sobre-feature-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: .75rem;
+    background: var(--gradient-primary);
+}
+.sobre-feature.accent .sobre-feature-icon { background: var(--gradient-accent); }
+.sobre-feature h3 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 0 0 .35rem;
+    color: var(--text);
+}
+.sobre-feature p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: .88rem;
+    line-height: 1.5;
+}
+
+.sobre-steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+.sobre-step {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+.sobre-step-num {
+    position: absolute;
+    top: .75rem; right: 1rem;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: rgba(15, 30, 58, .07);
+    letter-spacing: -2px;
+    line-height: 1;
+}
+.sobre-step-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: rgba(16, 185, 129, .15);
+    color: var(--accent-dark);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: .75rem;
+}
+.sobre-step h3 {
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0 0 .35rem;
+    color: var(--text);
+}
+.sobre-step p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: .88rem;
+}
+
+.sobre-tips {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .5rem;
+    margin-bottom: 1rem;
+}
+.sobre-tip {
+    background: var(--surface);
+    border-left: 3px solid var(--primary-light);
+    border-radius: 10px;
+    padding: .75rem 1rem;
+    font-size: .88rem;
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+}
+.sobre-tip i {
+    color: var(--primary);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+@media (min-width: 768px) {
+    .sobre-hero { padding: 3rem 2.5rem; }
+    .sobre-hero h1 { font-size: 2.4rem; }
+    .sobre-hero p.lead { font-size: 1.05rem; max-width: 600px; }
+    .sobre-features { grid-template-columns: 1fr 1fr; }
+    .sobre-steps { grid-template-columns: repeat(3, 1fr); }
+    .sobre-tips { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 1100px) {
+    .sobre-features { grid-template-columns: repeat(3, 1fr); }
+}
 @keyframes pulse-dot {
     0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, .6); }
     70%  { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
@@ -886,7 +1107,8 @@ main.container { max-width: 1180px; }
                 <a href="#/"          data-route="dashboard"><i class="bi bi-house-door-fill"></i> Início</a>
                 <a href="#/historico" data-route="historico"><i class="bi bi-clock-history"></i> Histórico</a>
                 <a href="#/nova"      data-route="nova"><i class="bi bi-plus-circle-fill"></i> Nova jornada</a>
-                <a href="#" id="btn-export" title="Baixar dados (JSON)"><i class="bi bi-download"></i> Exportar</a>
+                <a href="#/sobre"     data-route="sobre"><i class="bi bi-info-circle-fill"></i> Demonstração</a>
+                <a href="#" id="btn-export" title="Exportar histórico"><i class="bi bi-download"></i> Exportar</a>
                 <a href="#" id="btn-import" title="Importar JSON"><i class="bi bi-upload"></i> Importar</a>
             </nav>
         </div>
@@ -906,7 +1128,7 @@ main.container { max-width: 1180px; }
         <span class="add-circle"><i class="bi bi-plus-lg"></i></span>
         Nova
     </a>
-    <a href="#" id="btn-export-mobile"><i class="bi bi-download"></i>Exportar</a>
+    <a href="#/sobre" data-route="sobre"><i class="bi bi-info-circle-fill"></i>Sobre</a>
 </nav>
 
 <input type="file" id="import-file" accept="application/json" hidden>
@@ -1209,6 +1431,8 @@ function render() {
         renderHistorico(view, action, jornadas); setActiveLinks('historico');
     } else if (route === 'nova') {
         renderForm(view, action, null); setActiveLinks('nova');
+    } else if (route === 'sobre') {
+        renderSobre(view, action); setActiveLinks('sobre');
     } else if (route === 'editar' && param) {
         const j = jornadas.find(x => x.id == param);
         if (!j) { location.hash = '#/historico'; return; }
@@ -1405,6 +1629,98 @@ function renderHeatmap(jornadas) {
             <div class="hm-legend-max">Pico: R$ ${fmtBR(maxRh)}/h</div>
             ${insights}
         </div>`;
+}
+
+function renderSobre(view, action) {
+    action.innerHTML = '';
+    const totalLocal = load().length;
+    view.innerHTML = `
+        <div class="sobre-hero">
+            <div class="sobre-badge"><i class="bi bi-stars"></i> Conheça o Rota Certa</div>
+            <h1>Saiba quanto você <span class="grad-text">realmente lucra</span> em cada jornada.</h1>
+            <p class="lead">
+                O Rota Certa calcula seu R$/hora e R$/km com base nas jornadas que você registra.
+                Tudo offline, no seu celular, sem rastreio.
+            </p>
+            <div class="sobre-cta-row">
+                <a href="#/nova" class="btn btn-success btn-lg sobre-cta-primary">
+                    <i class="bi bi-plus-lg"></i> Iniciar jornada
+                </a>
+                <a href="#/" class="btn btn-outline-light sobre-cta-secondary">
+                    <i class="bi bi-bar-chart-fill"></i> Ver dashboard
+                </a>
+            </div>
+            <div class="sobre-mini-stats">
+                <div><strong>${totalLocal}</strong><small>Jornadas registradas</small></div>
+                <div><strong>R$/h</strong><small>Por hora rodada</small></div>
+                <div><strong>R$/km</strong><small>Por km percorrido</small></div>
+            </div>
+        </div>
+
+        <div class="section-title"><span>Recursos principais</span></div>
+        <div class="sobre-features">
+            ${[
+                ['mic-fill','accent','Preencha por voz','Diga "doze mil quilômetros" ou "duzentos e cinquenta reais" e o app entende. Sem digitar enquanto dirige.'],
+                ['play-circle-fill','primary','Inicie e finalize','Antes de sair: data, hora e KM inicial. Quando parar: complete e veja seu lucro calculado.'],
+                ['grid-3x3-gap-fill','accent','Heatmap dia × hora','Descubra seus melhores turnos. Vermelho é ruim, amarelo médio, verde excelente.'],
+                ['graph-up-arrow','primary','Métricas reais','R$/hora e R$/km calculados de forma ponderada — não médias enganosas.'],
+                ['file-earmark-arrow-down-fill','primary','Exportar histórico','PDF, Excel, Word ou JSON. Diário, semanal, mensal ou tudo.'],
+                ['shield-lock-fill','accent','100% privado','Dados ficam só no seu aparelho. Sem cadastro, sem nuvem, sem anúncios.'],
+            ].map(([icon, cor, titulo, txt]) => `
+                <div class="sobre-feature ${cor}">
+                    <div class="sobre-feature-icon"><i class="bi bi-${icon}"></i></div>
+                    <h3>${titulo}</h3>
+                    <p>${txt}</p>
+                </div>`).join('')}
+        </div>
+
+        <div class="section-title"><span>Como funciona</span></div>
+        <div class="sobre-steps">
+            <div class="sobre-step">
+                <div class="sobre-step-num">01</div>
+                <div class="sobre-step-icon"><i class="bi bi-play-fill"></i></div>
+                <h3>Inicie a jornada</h3>
+                <p>Toque em "Nova" e preencha apenas data, hora de início e KM inicial. Salve e vá trabalhar.</p>
+            </div>
+            <div class="sobre-step">
+                <div class="sobre-step-num">02</div>
+                <div class="sobre-step-icon"><i class="bi bi-stop-fill"></i></div>
+                <h3>Finalize ao parar</h3>
+                <p>Abra o card "Em andamento" no dashboard, complete hora final, KM final e o valor recebido.</p>
+            </div>
+            <div class="sobre-step">
+                <div class="sobre-step-num">03</div>
+                <div class="sobre-step-icon"><i class="bi bi-bar-chart-fill"></i></div>
+                <h3>Acompanhe o lucro</h3>
+                <p>Veja seu R$/h, R$/km e o lucro total. Filtre por hoje, semana, mês ou exporte para PDF.</p>
+            </div>
+        </div>
+
+        <div class="section-title"><span>Dicas rápidas</span></div>
+        <div class="sobre-tips">
+            <div class="sobre-tip"><i class="bi bi-mic-fill"></i> Toque no microfone azul ao lado dos campos para falar em vez de digitar.</div>
+            <div class="sobre-tip"><i class="bi bi-clock-fill"></i> Jornadas que cruzam meia-noite são calculadas corretamente.</div>
+            <div class="sobre-tip"><i class="bi bi-download"></i> Exporte um relatório semanal e mande no WhatsApp do contador.</div>
+            <div class="sobre-tip"><i class="bi bi-cloud-arrow-down-fill"></i> Funciona offline: pode usar mesmo sem sinal.</div>
+        </div>
+
+        <div class="support-banner">
+            <div class="sb-icon"><i class="bi bi-heart-fill"></i></div>
+            <div class="sb-content">
+                <h3>Curtindo o Rota Certa?</h3>
+                <p>Apoie o projeto para mantê-lo gratuito e sem anúncios para todos os motoristas.</p>
+            </div>
+            <a href="https://mpago.la/2z5Uj6E" target="_blank" rel="noopener" class="btn btn-success sb-btn">
+                <i class="bi bi-cash-coin"></i> Apoiar via Mercado Pago
+            </a>
+        </div>
+
+        <div class="text-center mt-4 mb-2">
+            <a href="#/" class="btn btn-primary btn-lg">
+                <i class="bi bi-arrow-left"></i> Voltar ao app
+            </a>
+        </div>
+    `;
 }
 
 function journeyCard(j, clickable) {
