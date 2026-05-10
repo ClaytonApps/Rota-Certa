@@ -19,6 +19,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- Bibliotecas para export (carregadas pela rede; SW cacheia depois) -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+
 <style>
 :root {
     --primary: #0f1e3a;
@@ -724,6 +729,143 @@ main.container { max-width: 1180px; }
     .support-banner { padding: 2rem; }
     .support-banner h3 { font-size: 1.25rem; }
 }
+
+/* ─── Modal de exportação ─────────────────────────────────── */
+.export-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(15, 30, 58, .65);
+    backdrop-filter: blur(6px);
+    z-index: 2500;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+    animation: fadein .2s ease;
+}
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+.export-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 1.75rem 1.5rem;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 24px 60px rgba(15, 30, 58, .35);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.export-card h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 0 0 .25rem;
+    color: var(--text);
+    display: flex; align-items: center; gap: .5rem;
+}
+.export-card h2 i { color: var(--primary); }
+.export-card p.sub {
+    color: var(--text-muted);
+    font-size: .85rem;
+    margin: 0 0 1.25rem;
+}
+.export-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--bg);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.export-close:hover { background: var(--border); color: var(--text); }
+.export-section-label {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin: 1rem 0 .5rem;
+}
+.export-period {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem;
+}
+.export-period label {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: .65rem .75rem;
+    cursor: pointer;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    transition: all .15s ease;
+}
+.export-period label:hover { border-color: var(--primary-light); }
+.export-period input { display: none; }
+.export-period input:checked + span {
+    color: #fff;
+}
+.export-period label:has(input:checked) {
+    background: var(--gradient-primary);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(15, 30, 58, .25);
+}
+.export-formats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem;
+}
+.export-fmt-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem .75rem;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: .9rem;
+    color: var(--text);
+    display: flex; align-items: center; gap: .65rem;
+    transition: all .15s ease;
+}
+.export-fmt-btn:hover {
+    border-color: var(--accent);
+    background: rgba(16, 185, 129, .05);
+    transform: translateY(-1px);
+}
+.export-fmt-btn i {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    color: #fff;
+    flex-shrink: 0;
+}
+.fmt-pdf   i { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.fmt-excel i { background: linear-gradient(135deg, #047857, #10b981); }
+.fmt-word  i { background: linear-gradient(135deg, #1e40af, #3b82f6); }
+.fmt-json  i { background: linear-gradient(135deg, #4b5563, #1f2937); }
+.export-fmt-btn .fmt-text { display: flex; flex-direction: column; align-items: flex-start; }
+.export-fmt-btn .fmt-text small { font-weight: 500; font-size: .7rem; color: var(--text-muted); }
+
+/* Botão "Exportar" no histórico e dashboard */
+.btn-export-trigger {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--primary);
+    border-radius: 999px;
+    padding: .35rem .9rem;
+    font-size: .8rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: .35rem;
+    cursor: pointer;
+    transition: all .15s ease;
+}
+.btn-export-trigger:hover { border-color: var(--primary); background: rgba(15, 30, 58, .04); color: var(--primary); }
 @keyframes pulse-dot {
     0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, .6); }
     70%  { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
@@ -1142,7 +1284,12 @@ function renderDashboard(view, action, jornadas) {
         ${renderHeatmap(filtradas)}
         <div class="section-title">
             <span>Últimas jornadas</span>
-            <a href="#/historico" class="text-decoration-none small fw-semibold" style="color: var(--primary);">Ver tudo <i class="bi bi-arrow-right"></i></a>
+            <span style="display: flex; gap: .5rem; align-items: center;">
+                <button type="button" class="btn-export-trigger" data-export-trigger>
+                    <i class="bi bi-download"></i> Exportar
+                </button>
+                <a href="#/historico" class="text-decoration-none small fw-semibold" style="color: var(--primary);">Ver tudo <i class="bi bi-arrow-right"></i></a>
+            </span>
         </div>
         ${ultimas.length ? `<div class="journey-list grid">${ultimas.map(j => journeyCard(j, true)).join('')}</div>` :
             `<div class="empty-state"><div class="empty-icon"><i class="bi bi-inbox"></i></div>
@@ -1291,8 +1438,10 @@ function renderHistorico(view, action, jornadas) {
     const sorted = jornadas.sort((a, b) => (b.data + b.hora_inicio).localeCompare(a.data + a.hora_inicio));
     view.innerHTML = `
         <div class="section-title">
-            <span>Todas as jornadas</span>
-            <span class="badge rounded-pill" style="background: var(--gradient-primary);">${sorted.length}</span>
+            <span>Todas as jornadas <span class="badge rounded-pill ms-1" style="background: var(--gradient-primary);">${sorted.length}</span></span>
+            <button type="button" class="btn-export-trigger" data-export-trigger>
+                <i class="bi bi-download"></i> Exportar
+            </button>
         </div>
         ${sorted.length ? `<div class="journey-list grid">${sorted.map(j => `
             <div class="journey-item${j.em_andamento ? ' pending' : ''}" style="cursor: default;">
@@ -1467,14 +1616,264 @@ function renderExcluir(view, j) {
     });
 }
 
-function exportar() {
-    const blob = new Blob([JSON.stringify(load(), null, 2)], { type: 'application/json' });
+/* ─── Modal de exportação ─────────────────────────────────── */
+const EXPORT_PERIODOS = {
+    hoje:   'Diário (hoje)',
+    semana: 'Semanal (últimos 7 dias)',
+    mes:    'Mensal (últimos 30 dias)',
+    tudo:   'Tudo',
+};
+const NOMES_PERIODOS = { hoje: 'diario', semana: 'semanal', mes: 'mensal', tudo: 'completo' };
+
+function abrirModalExport() {
+    if (document.getElementById('export-modal')) return;
+    const html = `
+        <div class="export-backdrop" id="export-modal">
+            <div class="export-card">
+                <button type="button" class="export-close" aria-label="Fechar">&times;</button>
+                <h2><i class="bi bi-download"></i> Exportar histórico</h2>
+                <p class="sub">Escolha o período e o formato do relatório.</p>
+
+                <div class="export-section-label">Período</div>
+                <div class="export-period">
+                    ${Object.entries(EXPORT_PERIODOS).map(([k, l], i) => `
+                        <label>
+                            <input type="radio" name="exp-periodo" value="${k}" ${i === 2 ? 'checked' : ''}>
+                            <span>${l}</span>
+                        </label>
+                    `).join('')}
+                </div>
+
+                <div class="export-section-label">Formato</div>
+                <div class="export-formats">
+                    <button type="button" class="export-fmt-btn fmt-pdf"   data-formato="pdf">
+                        <i class="bi bi-file-earmark-pdf-fill"></i>
+                        <span class="fmt-text">PDF<small>Relatório imprimível</small></span>
+                    </button>
+                    <button type="button" class="export-fmt-btn fmt-excel" data-formato="excel">
+                        <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                        <span class="fmt-text">Excel<small>Planilha .xlsx</small></span>
+                    </button>
+                    <button type="button" class="export-fmt-btn fmt-word"  data-formato="word">
+                        <i class="bi bi-file-earmark-word-fill"></i>
+                        <span class="fmt-text">Word<small>Documento .doc</small></span>
+                    </button>
+                    <button type="button" class="export-fmt-btn fmt-json"  data-formato="json">
+                        <i class="bi bi-filetype-json"></i>
+                        <span class="fmt-text">JSON<small>Backup / importar</small></span>
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    document.body.insertAdjacentHTML('beforeend', html);
+    const backdrop = document.getElementById('export-modal');
+    const fechar = () => backdrop.remove();
+    backdrop.querySelector('.export-close').addEventListener('click', fechar);
+    backdrop.addEventListener('click', e => { if (e.target === backdrop) fechar(); });
+    backdrop.querySelectorAll('[data-formato]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const periodo = backdrop.querySelector('input[name="exp-periodo"]:checked').value;
+            executarExport(periodo, btn.dataset.formato);
+            fechar();
+        });
+    });
+}
+
+function dadosParaExport(periodo) {
+    const todas = load().map(enriquecer);
+    const filtradas = filtrarPeriodo(todas, periodo)
+        .sort((a, b) => (a.data + a.hora_inicio).localeCompare(b.data + b.hora_inicio));
+    return { jornadas: filtradas, resumo: resumoDashboard(filtradas), periodoLabel: EXPORT_PERIODOS[periodo] };
+}
+
+function executarExport(periodo, formato) {
+    const { jornadas, resumo, periodoLabel } = dadosParaExport(periodo);
+    if (!jornadas.length) {
+        alerta('Nenhuma jornada nesse período para exportar.', 'warning');
+        return;
+    }
+    const stamp = todayISO();
+    const fname = `rota-certa-${NOMES_PERIODOS[periodo]}-${stamp}`;
+    try {
+        if (formato === 'pdf')   exportarPDF(jornadas, resumo, periodoLabel, fname);
+        if (formato === 'excel') exportarExcel(jornadas, resumo, periodoLabel, fname);
+        if (formato === 'word')  exportarWord(jornadas, resumo, periodoLabel, fname);
+        if (formato === 'json')  exportarJSON(jornadas, fname);
+        alerta(`Arquivo ${formato.toUpperCase()} exportado com sucesso.`);
+    } catch (err) {
+        console.error(err);
+        alerta('Erro ao gerar arquivo: ' + (err.message || err), 'danger');
+    }
+}
+
+function linhaJornada(j) {
+    return [
+        fmtData(j.data),
+        j.hora_inicio || '—',
+        j.hora_fim || '—',
+        j.em_andamento ? '—' : j.total_horas_formatado,
+        fmtBR(j.km_inicial),
+        j.km_final != null ? fmtBR(j.km_final) : '—',
+        j.em_andamento ? '—' : fmtBR(j.total_km),
+        j.valor_bruto != null ? 'R$ ' + fmtBR(j.valor_bruto) : '—',
+        j.em_andamento ? '—' : 'R$ ' + fmtBR(j.preco_por_km),
+        j.em_andamento ? '—' : 'R$ ' + fmtBR(j.preco_por_hora),
+    ];
+}
+const HEADER_COLUNAS = ['Data', 'Início', 'Fim', 'Horas', 'KM ini.', 'KM fim', 'Total km', 'Valor bruto', 'R$/km', 'R$/h'];
+
+function exportarPDF(jornadas, resumo, periodoLabel, fname) {
+    if (!window.jspdf) throw new Error('Biblioteca PDF ainda carregando, tente de novo em 1s.');
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+    const W = doc.internal.pageSize.getWidth();
+
+    // Cabeçalho colorido
+    doc.setFillColor(15, 30, 58);
+    doc.rect(0, 0, W, 70, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.text('Rota Certa', 30, 35);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text('Histórico de jornadas · ' + periodoLabel, 30, 52);
+    doc.setFontSize(8);
+    doc.text('Gerado em ' + new Date().toLocaleString('pt-BR'), 30, 64);
+
+    // Resumo
+    doc.setTextColor(31, 41, 55);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`R$ ${fmtBR(resumo.total_bruto)}`, 30, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(75, 85, 99);
+    doc.text(`${resumo.total_jornadas} jornadas · ${fmtBR(resumo.total_km)} km · ${fmtBR(resumo.total_horas)} h`, 30, 115);
+    doc.text(`Médias: R$ ${fmtBR(resumo.media_por_km)}/km · R$ ${fmtBR(resumo.media_por_hora)}/h`, 30, 128);
+
+    doc.autoTable({
+        startY: 145,
+        head: [HEADER_COLUNAS],
+        body: jornadas.map(linhaJornada),
+        styles: { fontSize: 9, cellPadding: 5 },
+        headStyles: { fillColor: [15, 30, 58], textColor: 255, fontStyle: 'bold' },
+        alternateRowStyles: { fillColor: [243, 244, 246] },
+        margin: { left: 30, right: 30 },
+        didDrawPage: (data) => {
+            const pageH = doc.internal.pageSize.getHeight();
+            doc.setFontSize(8); doc.setTextColor(107, 114, 128);
+            doc.text(`Página ${doc.internal.getNumberOfPages()}`, W - 30, pageH - 15, { align: 'right' });
+            doc.text('https://claytonapps.github.io/Rota-Certa/', 30, pageH - 15);
+        },
+    });
+
+    doc.save(fname + '.pdf');
+}
+
+function exportarExcel(jornadas, resumo, periodoLabel, fname) {
+    if (!window.XLSX) throw new Error('Biblioteca Excel ainda carregando, tente de novo em 1s.');
+    const wb = XLSX.utils.book_new();
+    const aoa = [
+        ['Rota Certa — Histórico de jornadas'],
+        ['Período: ' + periodoLabel],
+        ['Gerado em: ' + new Date().toLocaleString('pt-BR')],
+        [],
+        ['Total bruto', +resumo.total_bruto, 'Total km', +resumo.total_km, 'Total horas', +resumo.total_horas],
+        ['Média R$/km', +resumo.media_por_km, 'Média R$/h', +resumo.media_por_hora, 'Jornadas', resumo.total_jornadas],
+        [],
+        HEADER_COLUNAS,
+        ...jornadas.map(j => [
+            fmtData(j.data),
+            j.hora_inicio || '',
+            j.hora_fim || '',
+            j.em_andamento ? '' : +j.total_horas,
+            +j.km_inicial,
+            j.km_final != null ? +j.km_final : '',
+            j.em_andamento ? '' : +j.total_km,
+            j.valor_bruto != null ? +j.valor_bruto : '',
+            j.em_andamento ? '' : +j.preco_por_km,
+            j.em_andamento ? '' : +j.preco_por_hora,
+        ]),
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = [
+        { wch: 12 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 11 },
+        { wch: 11 }, { wch: 10 }, { wch: 13 }, { wch: 10 }, { wch: 10 },
+    ];
+    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }];
+    XLSX.utils.book_append_sheet(wb, ws, 'Jornadas');
+    XLSX.writeFile(wb, fname + '.xlsx');
+}
+
+function exportarWord(jornadas, resumo, periodoLabel, fname) {
+    const linhas = jornadas.map(j => `
+        <tr${j.em_andamento ? ' style="background:rgba(16,185,129,.06)"' : ''}>
+            <td>${fmtData(j.data)}</td>
+            <td>${j.hora_inicio || '—'}</td>
+            <td>${j.hora_fim || '—'}</td>
+            <td>${j.em_andamento ? '—' : j.total_horas_formatado}</td>
+            <td>${fmtBR(j.km_inicial)}</td>
+            <td>${j.km_final != null ? fmtBR(j.km_final) : '—'}</td>
+            <td>${j.em_andamento ? '—' : fmtBR(j.total_km)}</td>
+            <td><strong>${j.valor_bruto != null ? 'R$ ' + fmtBR(j.valor_bruto) : '—'}</strong></td>
+            <td>${j.em_andamento ? '—' : 'R$ ' + fmtBR(j.preco_por_km)}</td>
+            <td>${j.em_andamento ? '—' : 'R$ ' + fmtBR(j.preco_por_hora)}</td>
+        </tr>`).join('');
+    const html = `<!doctype html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8"><title>Rota Certa</title>
+<style>
+@page { size: A4 landscape; margin: 1.5cm; }
+body { font-family: Calibri, Arial, sans-serif; color: #111827; }
+h1 { color: #0f1e3a; margin: 0 0 4px; font-size: 24pt; }
+.sub { color: #6b7280; font-size: 10pt; margin: 0 0 16px; }
+.summary { background: #ecfdf5; border-left: 4px solid #10b981; padding: 12px 16px; margin-bottom: 18px; }
+.summary p { margin: 4px 0; }
+.summary strong { color: #059669; }
+table { border-collapse: collapse; width: 100%; font-size: 10pt; }
+th { background: #0f1e3a; color: white; padding: 8px; text-align: left; font-weight: bold; }
+td { padding: 6px 8px; border-bottom: 1px solid #e5e7eb; }
+tr:nth-child(even) td { background: #f3f4f6; }
+.footer { margin-top: 24px; font-size: 8pt; color: #9ca3af; text-align: center; }
+</style></head>
+<body>
+<h1>Rota Certa — Histórico de jornadas</h1>
+<p class="sub"><strong>Período:</strong> ${periodoLabel} &nbsp;·&nbsp; <strong>Gerado em:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+<div class="summary">
+    <p>Total recebido: <strong>R$ ${fmtBR(resumo.total_bruto)}</strong> em ${resumo.total_jornadas} jornadas</p>
+    <p>${fmtBR(resumo.total_km)} km percorridos · ${fmtBR(resumo.total_horas)} horas trabalhadas</p>
+    <p>Médias: R$ ${fmtBR(resumo.media_por_km)}/km · R$ ${fmtBR(resumo.media_por_hora)}/h</p>
+</div>
+<table>
+    <thead><tr>${HEADER_COLUNAS.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${linhas}</tbody>
+</table>
+<p class="footer">Rota Certa · https://claytonapps.github.io/Rota-Certa/</p>
+</body></html>`;
+    const blob = new Blob(['﻿' + html], { type: 'application/msword' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `rota-certa-${todayISO()}.json`;
+    a.download = fname + '.doc';
     a.click();
     URL.revokeObjectURL(a.href);
 }
+
+function exportarJSON(jornadas, fname) {
+    // Para JSON exporto a forma "pura" do banco (sem campos enriquecidos)
+    const dados = jornadas.map(j => ({
+        id: j.id, data: j.data,
+        hora_inicio: j.hora_inicio, hora_fim: j.hora_fim,
+        km_inicial: j.km_inicial, km_final: j.km_final,
+        valor_bruto: j.valor_bruto,
+    }));
+    const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fname + '.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
 function importar(file) {
     const reader = new FileReader();
     reader.onload = () => {
@@ -1486,10 +1885,15 @@ function importar(file) {
     };
     reader.readAsText(file);
 }
-document.getElementById('btn-export').addEventListener('click', e => { e.preventDefault(); exportar(); });
-document.getElementById('btn-export-mobile').addEventListener('click', e => { e.preventDefault(); exportar(); });
+
+document.getElementById('btn-export').addEventListener('click', e => { e.preventDefault(); abrirModalExport(); });
+document.getElementById('btn-export-mobile').addEventListener('click', e => { e.preventDefault(); abrirModalExport(); });
 document.getElementById('btn-import').addEventListener('click', e => { e.preventDefault(); document.getElementById('import-file').click(); });
 document.getElementById('import-file').addEventListener('change', e => { if (e.target.files[0]) importar(e.target.files[0]); });
+// Botão "Exportar" em tela (renderizado via templates do dashboard / histórico)
+document.addEventListener('click', e => {
+    if (e.target.closest('[data-export-trigger]')) { e.preventDefault(); abrirModalExport(); }
+});
 
 if (!localStorage.getItem(KEY)) {
     const hoje = new Date();
