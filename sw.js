@@ -7,7 +7,7 @@
  *   - App shell  → cache-first
  *   - Externos   → stale-while-revalidate
  */
-const CACHE_NAME = 'rota-certa-v3';
+const CACHE_NAME = 'rota-certa-v4';
 const APP_SHELL = [
     './',
     './index.html',

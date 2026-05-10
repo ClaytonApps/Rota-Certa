@@ -534,6 +534,107 @@ main.container { max-width: 1180px; }
     box-shadow: 0 0 0 0 rgba(16, 185, 129, .6);
     animation: pulse-dot 1.6s infinite;
 }
+
+/* ─── Heatmap dia × hora ──────────────────────────────────── */
+.heatmap { padding: 1rem; margin-bottom: 1rem; }
+.hm-scroll { overflow-x: auto; padding-bottom: .5rem; scrollbar-width: thin; }
+.hm-scroll::-webkit-scrollbar { height: 6px; }
+.hm-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.hm-grid {
+    display: grid;
+    grid-template-columns: 38px repeat(24, minmax(18px, 1fr));
+    gap: 3px;
+    min-width: 560px;
+}
+.hm-corner, .hm-hcol, .hm-day {
+    font-size: .65rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+.hm-day { justify-content: flex-end; padding-right: .25rem; }
+.hm-hcol { height: 16px; }
+.hm-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    transition: transform .15s ease;
+    cursor: help;
+    border: 1px solid rgba(15, 30, 58, .03);
+}
+.hm-cell:hover { transform: scale(1.25); z-index: 5; position: relative; box-shadow: 0 4px 12px rgba(15, 30, 58, .2); }
+.hm-cell.best {
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, .25);
+    animation: best-pulse 2s ease-in-out infinite;
+}
+@keyframes best-pulse {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(16, 185, 129, .25); }
+    50%      { box-shadow: 0 0 0 4px rgba(16, 185, 129, .15); }
+}
+.hm-legend {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-top: .85rem;
+    font-size: .7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+.hm-legend-bar {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #eef2f7 0%, #10b981 50%, #059669 100%);
+}
+.hm-empty, .heatmap-empty {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: .9rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+}
+.heatmap-empty i { font-size: 1.6rem; display: block; margin-bottom: .5rem; color: var(--primary-light); }
+.hm-insights {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .65rem;
+    margin-top: 1rem;
+}
+.hm-insight {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem .9rem;
+    background: linear-gradient(90deg, rgba(16,185,129,.08) 0%, transparent 80%);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    font-size: .85rem;
+}
+.hm-insight i {
+    font-size: 1.3rem;
+    color: var(--accent-dark);
+}
+.hm-insight .hm-i-label {
+    font-size: .65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+.hm-insight strong { font-weight: 700; color: var(--text); margin-right: .35rem; }
+.hm-insight .hm-i-rh { color: var(--accent-dark); font-weight: 700; }
+@media (min-width: 768px) {
+    .hm-insights { grid-template-columns: repeat(3, 1fr); }
+}
 @keyframes pulse-dot {
     0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, .6); }
     70%  { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
@@ -753,6 +854,60 @@ function enriquecer(j) {
         preco_por_hora: precoPorHora(+j.valor_bruto, total_horas),
         total_horas_formatado: formatarHorasDecimais(total_horas) };
 }
+// Distribui jornadas em uma grade [dia da semana × hora do dia], devolvendo
+// R$/hora médio por célula, melhor célula, melhor dia e melhor hora.
+function gerarHeatmap(jornadas) {
+    const grid = Array.from({ length: 7 }, () =>
+        Array.from({ length: 24 }, () => ({ horas: 0, valor: 0, rh: 0 })));
+    const porDia  = Array.from({ length: 7 },  () => ({ horas: 0, valor: 0, rh: 0 }));
+    const porHora = Array.from({ length: 24 }, () => ({ horas: 0, valor: 0, rh: 0 }));
+
+    for (const j of jornadas) {
+        if (j.em_andamento) continue;
+        if (!j.hora_inicio || !j.hora_fim || j.valor_bruto == null) continue;
+        const baseDia = new Date(j.data + 'T00:00:00').getDay();
+        const [h1, m1] = j.hora_inicio.split(':').map(Number);
+        const [h2, m2] = j.hora_fim.split(':').map(Number);
+        let inicioMin = h1 * 60 + m1;
+        let fimMin = h2 * 60 + m2;
+        if (fimMin <= inicioMin) fimMin += 24 * 60;
+        const totalMin = fimMin - inicioMin;
+        if (totalMin <= 0) continue;
+        const valorPorMin = (+j.valor_bruto) / totalMin;
+        let cur = inicioMin;
+        while (cur < fimMin) {
+            const hAbs = Math.floor(cur / 60);
+            const horaAtual = hAbs % 24;
+            const diaAtual = (baseDia + Math.floor(hAbs / 24)) % 7;
+            const proximo = Math.min(fimMin, (hAbs + 1) * 60);
+            const minCell = proximo - cur;
+            const horasCell = minCell / 60;
+            const valorCell = valorPorMin * minCell;
+            grid[diaAtual][horaAtual].horas += horasCell;
+            grid[diaAtual][horaAtual].valor += valorCell;
+            porDia[diaAtual].horas  += horasCell; porDia[diaAtual].valor  += valorCell;
+            porHora[horaAtual].horas += horasCell; porHora[horaAtual].valor += valorCell;
+            cur = proximo;
+        }
+    }
+
+    let maxRh = 0, melhorCell = null;
+    for (let d = 0; d < 7; d++) {
+        for (let h = 0; h < 24; h++) {
+            const c = grid[d][h];
+            c.rh = c.horas > 0 ? c.valor / c.horas : 0;
+            if (c.rh > maxRh) { maxRh = c.rh; melhorCell = { dia: d, hora: h, rh: c.rh, horas: c.horas }; }
+        }
+    }
+    let melhorDia = null, melhorHora = null;
+    porDia.forEach((c, i)  => { c.rh = c.horas > 0 ? c.valor / c.horas : 0;
+        if (!melhorDia || c.rh > melhorDia.rh)  melhorDia  = { dia: i,  rh: c.rh, horas: c.horas }; });
+    porHora.forEach((c, i) => { c.rh = c.horas > 0 ? c.valor / c.horas : 0;
+        if (!melhorHora || c.rh > melhorHora.rh) melhorHora = { hora: i, rh: c.rh, horas: c.horas }; });
+
+    return { grid, maxRh, melhorCell, melhorDia, melhorHora };
+}
+
 function resumoDashboard(jornadas) {
     let bruto = 0, km = 0, horas = 0, qtd = 0;
     for (const j of jornadas) {
@@ -895,6 +1050,7 @@ function renderDashboard(view, action, jornadas) {
                 <div class="label">Total horas</div><div class="value text-money">${fmtBR(r.total_horas)}</div>
             </div></div>
         </div>
+        ${renderHeatmap(filtradas)}
         <div class="section-title">
             <span>Últimas jornadas</span>
             <a href="#/historico" class="text-decoration-none small fw-semibold" style="color: var(--primary);">Ver tudo <i class="bi bi-arrow-right"></i></a>
@@ -903,6 +1059,93 @@ function renderDashboard(view, action, jornadas) {
             `<div class="empty-state"><div class="empty-icon"><i class="bi bi-inbox"></i></div>
                 <p class="mb-3">Nenhuma jornada no período selecionado.</p>
                 <a href="#/nova" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Registrar jornada</a></div>`}`;
+}
+
+const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+function renderHeatmap(jornadas) {
+    const { grid, maxRh, melhorCell, melhorDia, melhorHora } = gerarHeatmap(jornadas);
+    if (maxRh === 0) {
+        return `
+            <div class="section-title"><span>Heatmap dia × hora</span></div>
+            <div class="heatmap-empty">
+                <i class="bi bi-grid-3x3"></i>
+                Conclua algumas jornadas para ver seus melhores horários aqui.
+            </div>`;
+    }
+    const cor = (rh) => {
+        if (rh <= 0) return '#eef2f7';
+        const t = Math.min(1, rh / maxRh);
+        // De cinza-claro (#eef2f7) → verde-escuro (#059669) com tom de azul intermediário
+        const r = Math.round(238 - 233 * t);
+        const g = Math.round(242 - 92  * t);
+        const b = Math.round(247 - 142 * t);
+        return `rgb(${r}, ${g}, ${b})`;
+    };
+
+    let cabec = '<div class="hm-corner"></div>';
+    for (let h = 0; h < 24; h++) {
+        cabec += `<div class="hm-hcol">${h % 3 === 0 ? String(h).padStart(2, '0') : ''}</div>`;
+    }
+    let linhas = '';
+    for (let d = 0; d < 7; d++) {
+        linhas += `<div class="hm-day">${DIAS_SEMANA[d]}</div>`;
+        for (let h = 0; h < 24; h++) {
+            const c = grid[d][h];
+            const isBest = melhorCell && melhorCell.dia === d && melhorCell.hora === h;
+            const tip = c.horas > 0
+                ? `${DIAS_SEMANA[d]} ${String(h).padStart(2, '0')}h — R$ ${fmtBR(c.rh)}/h (${c.horas.toFixed(1)} h)`
+                : `${DIAS_SEMANA[d]} ${String(h).padStart(2, '0')}h — sem dados`;
+            linhas += `<div class="hm-cell${isBest ? ' best' : ''}" style="background:${cor(c.rh)}" title="${tip}"></div>`;
+        }
+    }
+    const insights = `
+        <div class="hm-insights">
+            <div class="hm-insight">
+                <i class="bi bi-trophy-fill"></i>
+                <div>
+                    <div class="hm-i-label">Melhor turno</div>
+                    <strong>${DIAS_SEMANA[melhorCell.dia]} às ${String(melhorCell.hora).padStart(2, '0')}h</strong>
+                    <span class="hm-i-rh">R$ ${fmtBR(melhorCell.rh)}/h</span>
+                </div>
+            </div>
+            <div class="hm-insight">
+                <i class="bi bi-calendar-week-fill"></i>
+                <div>
+                    <div class="hm-i-label">Melhor dia</div>
+                    <strong>${DIAS_SEMANA[melhorDia.dia]}</strong>
+                    <span class="hm-i-rh">R$ ${fmtBR(melhorDia.rh)}/h</span>
+                </div>
+            </div>
+            <div class="hm-insight">
+                <i class="bi bi-clock-fill"></i>
+                <div>
+                    <div class="hm-i-label">Melhor horário</div>
+                    <strong>${String(melhorHora.hora).padStart(2, '0')}h</strong>
+                    <span class="hm-i-rh">R$ ${fmtBR(melhorHora.rh)}/h</span>
+                </div>
+            </div>
+        </div>`;
+
+    return `
+        <div class="section-title">
+            <span>Heatmap dia × hora</span>
+            <span class="small fw-normal" style="color: var(--text-muted);">R$/hora médio</span>
+        </div>
+        <div class="heatmap card">
+            <div class="hm-scroll">
+                <div class="hm-grid">
+                    ${cabec}
+                    ${linhas}
+                </div>
+            </div>
+            <div class="hm-legend">
+                <span>Menor</span>
+                <span class="hm-legend-bar"></span>
+                <span>Maior · R$ ${fmtBR(maxRh)}/h</span>
+            </div>
+            ${insights}
+        </div>`;
 }
 
 function journeyCard(j, clickable) {
