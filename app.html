@@ -24,6 +24,11 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
 
+<!-- Firebase (Auth anônimo + Firestore para sincronizar dados na nuvem) -->
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
+
 <style>
 :root {
     --primary: #0f1e3a;
@@ -81,6 +86,35 @@ main.container { max-width: 1180px; }
     align-items: center;
     gap: .5rem;
 }
+.cloud-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    font-size: .95rem;
+    transition: all .3s ease;
+    cursor: default;
+}
+.cloud-status.online {
+    background: rgba(16, 185, 129, .25);
+    color: var(--accent-light);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, .5);
+    animation: cloud-pulse 2.5s ease-in-out infinite;
+}
+.cloud-status.offline {
+    background: rgba(255, 255, 255, .12);
+    color: rgba(255, 255, 255, .7);
+}
+.cloud-status.syncing {
+    background: rgba(251, 191, 36, .25);
+    color: #fbbf24;
+}
+@keyframes cloud-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, .4); }
+    50%      { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+}
+
 .topbar .brand-icon {
     background: rgba(255,255,255,.18);
     width: 36px; height: 36px;
@@ -1134,7 +1168,12 @@ main.container { max-width: 1180px; }
                 <a href="#" id="btn-import" title="Importar JSON"><i class="bi bi-upload"></i> Importar</a>
             </nav>
         </div>
-        <div id="topbar-action" class="d-none d-lg-block"></div>
+        <div class="d-flex align-items-center gap-2">
+            <span id="cloud-status" class="cloud-status offline" title="Conectando à nuvem...">
+                <i class="bi bi-cloud-slash"></i>
+            </span>
+            <div id="topbar-action" class="d-none d-lg-block"></div>
+        </div>
     </div>
 </header>
 
@@ -1293,11 +1332,148 @@ main.container { max-width: 1180px; }
 
 const KEY = 'lucrometro:jornadas:v1';
 
-function load() {
-    try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : []; }
-    catch { return []; }
+/* ─── Firebase + localStorage híbrido ─────────────────────────
+ * - _cache é a fonte da verdade para a UI (sempre síncrono)
+ * - localStorage guarda uma cópia para abrir offline / inicial
+ * - Firestore sincroniza entre dispositivos quando online
+ * - Se Firebase não inicializar (config inválida, sem internet, etc.)
+ *   o app continua funcionando 100% no localStorage
+ */
+const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyCTveqiqXLPcmrWMzW_ZQjfaZV24IvWA6g",
+    authDomain: "rota-certa-4681c.firebaseapp.com",
+    projectId: "rota-certa-4681c",
+    storageBucket: "rota-certa-4681c.firebasestorage.app",
+    messagingSenderId: "699455376529",
+    appId: "1:699455376529:web:4f1133693e6f5e80c14330"
+};
+
+let _cache = [];
+let _fb = null;           // { auth, db, uid } quando logado
+let _cloudReady = false;
+let _firstSnapshot = true;
+
+function setCloudStatus(estado, titulo) {
+    const el = document.getElementById('cloud-status');
+    if (!el) return;
+    el.className = 'cloud-status ' + estado;
+    el.title = titulo;
+    const icon = { online: 'cloud-check-fill', offline: 'cloud-slash', syncing: 'cloud-arrow-up-fill' }[estado] || 'cloud-slash';
+    el.innerHTML = `<i class="bi bi-${icon}"></i>`;
 }
-function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
+
+function carregarCacheInicial() {
+    try { _cache = JSON.parse(localStorage.getItem(KEY) || '[]'); }
+    catch { _cache = []; }
+}
+
+async function inicializarFirebase() {
+    if (typeof firebase === 'undefined') {
+        console.warn('Firebase SDK indisponível — modo offline-only');
+        setCloudStatus('offline', 'Sem conexão com a nuvem — dados salvos só neste dispositivo');
+        return;
+    }
+    try {
+        firebase.initializeApp(FIREBASE_CONFIG);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Persistência offline (continua funcionando sem sinal, sincroniza ao voltar)
+        try { await db.enablePersistence({ synchronizeTabs: true }); } catch (e) {/* ok */}
+
+        setCloudStatus('syncing', 'Conectando à nuvem...');
+
+        auth.onAuthStateChanged(user => {
+            if (!user) {
+                auth.signInAnonymously().catch(err => {
+                    console.warn('Login anônimo falhou:', err.code, err.message);
+                    setCloudStatus('offline',
+                        'Login anônimo não habilitado no Firebase. Dados salvos só neste dispositivo.');
+                });
+                return;
+            }
+            _fb = { auth, db, uid: user.uid };
+            assinarFirestore();
+        });
+    } catch (err) {
+        console.warn('Firebase init falhou:', err.message);
+        setCloudStatus('offline', 'Erro ao conectar — dados salvos só neste dispositivo');
+    }
+}
+
+function assinarFirestore() {
+    const ref = _fb.db.collection('users').doc(_fb.uid).collection('jornadas');
+
+    ref.onSnapshot(snap => {
+        const remoto = snap.docs.map(d => {
+            const data = d.data();
+            return { ...data, id: parseInt(d.id, 10) || data.id };
+        });
+
+        if (_firstSnapshot) {
+            _firstSnapshot = false;
+            const local = JSON.parse(localStorage.getItem(KEY) || '[]');
+            // Migra dados do dispositivo para a nuvem na primeira execução
+            if (remoto.length === 0 && local.length > 0) {
+                console.log('Migrando', local.length, 'jornadas para a nuvem...');
+                setCloudStatus('syncing', 'Migrando dados para a nuvem...');
+                const batch = _fb.db.batch();
+                local.forEach((j, i) => {
+                    const id = j.id || (i + 1);
+                    batch.set(ref.doc(String(id)), { ...j, id });
+                });
+                batch.commit()
+                    .then(() => alerta(`☁️ ${local.length} jornadas sincronizadas com a nuvem!`))
+                    .catch(err => {
+                        console.error('Erro na migração:', err);
+                        alerta('Erro ao migrar para a nuvem. Dados seguem salvos localmente.', 'warning');
+                    });
+                return; // listener vai disparar de novo com os dados migrados
+            }
+        }
+
+        _cache = remoto;
+        localStorage.setItem(KEY, JSON.stringify(_cache));
+        _cloudReady = true;
+        setCloudStatus('online', 'Sincronizado com a nuvem');
+        render();
+    }, err => {
+        console.error('Erro Firestore:', err.code, err.message);
+        if (err.code === 'permission-denied') {
+            setCloudStatus('offline',
+                'Firestore sem permissão. Verifique as regras no console do Firebase.');
+        } else {
+            setCloudStatus('offline', 'Erro de sincronização — dados salvos localmente');
+        }
+    });
+}
+
+function load() { return _cache.slice(); }
+
+function save(novaLista) {
+    const cacheAntigo = _cache;
+    _cache = novaLista;
+    localStorage.setItem(KEY, JSON.stringify(novaLista));
+
+    if (!_cloudReady) return;  // modo offline-only
+
+    const ref = _fb.db.collection('users').doc(_fb.uid).collection('jornadas');
+    const idsNovos = new Set(novaLista.map(j => j.id));
+    const idsAntigos = new Set(cacheAntigo.map(j => j.id));
+    const batch = _fb.db.batch();
+
+    novaLista.forEach(j => batch.set(ref.doc(String(j.id)), { ...j }));
+    idsAntigos.forEach(id => { if (!idsNovos.has(id)) batch.delete(ref.doc(String(id))); });
+
+    setCloudStatus('syncing', 'Sincronizando...');
+    batch.commit()
+        .then(() => setCloudStatus('online', 'Sincronizado com a nuvem'))
+        .catch(err => {
+            console.error('Erro ao salvar na nuvem:', err);
+            setCloudStatus('offline', 'Salvo localmente. Sincronizará quando voltar online.');
+        });
+}
+
 function nextId(list) { return list.reduce((m, j) => Math.max(m, j.id || 0), 0) + 1; }
 
 function q2(n) { return Math.round((+n || 0) * 100) / 100; }
@@ -2239,31 +2415,19 @@ document.addEventListener('click', e => {
     if (e.target.closest('[data-export-trigger]')) { e.preventDefault(); abrirModalExport(); }
 });
 
-if (!localStorage.getItem(KEY)) {
-    const hoje = new Date();
-    const seed = [
-        [0, '07:00', '15:30', 45000.0, 45198.5, 285.50],
-        [1, '06:30', '14:00', 44800.2, 45000.0, 240.00],
-        [2, '18:00', '02:30', 44600.0, 44800.2, 320.75],
-        [4, '08:00', '17:00', 44400.0, 44600.0, 295.00],
-        [6, '07:15', '16:45', 44200.0, 44400.0, 310.20],
-        [10,'09:00', '18:30', 43950.0, 44200.0, 275.50],
-    ].map((row, i) => {
-        const d = new Date(hoje); d.setDate(d.getDate() - row[0]);
-        return { id: i + 1, data: d.toISOString().slice(0, 10),
-            hora_inicio: row[1], hora_fim: row[2],
-            km_inicial: row[3], km_final: row[4], valor_bruto: row[5] };
-    });
-    save(seed);
-}
-
 // Mostra "Novo" no bottom-nav até o usuário visitar a tela Sobre pela primeira vez
 if (!localStorage.getItem('lucrometro:sobre-visto')) {
     const pill = document.getElementById('sobre-pill');
     if (pill) pill.hidden = false;
 }
 
+// Boot:
+//   1. Carrega cache local (instantâneo — UI nunca trava)
+//   2. Renderiza
+//   3. Inicializa Firebase em background (sincroniza quando logar)
+carregarCacheInicial();
 render();
+inicializarFirebase();
 })();
 
 if ('serviceWorker' in navigator) {
