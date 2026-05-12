@@ -933,6 +933,10 @@ main.container { max-width: 1180px; }
     position: relative;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
 }
 .sobre-hero::after {
     content: '';
@@ -942,6 +946,13 @@ main.container { max-width: 1180px; }
     background: radial-gradient(circle, rgba(255,255,255,.16) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
+}
+.sobre-hero-content { position: relative; z-index: 1; }
+.sobre-phone-wrap {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
 }
 .sobre-badge {
     display: inline-flex;
@@ -1133,7 +1144,7 @@ main.container { max-width: 1180px; }
 }
 
 @media (min-width: 768px) {
-    .sobre-hero { padding: 3rem 2.5rem; }
+    .sobre-hero { padding: 3rem 2.5rem; grid-template-columns: 1.2fr 1fr; gap: 2.5rem; }
     .sobre-hero h1 { font-size: 2.4rem; }
     .sobre-hero p.lead { font-size: 1.05rem; max-width: 600px; }
     .sobre-features { grid-template-columns: 1fr 1fr; }
@@ -1142,6 +1153,141 @@ main.container { max-width: 1180px; }
 }
 @media (min-width: 1100px) {
     .sobre-features { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ─── Mockup do celular (tela Sobre) ──────────────────────── */
+.phone {
+    width: 240px;
+    background: #0a1628;
+    border-radius: 32px;
+    padding: 10px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06);
+    transform: rotate(-3deg);
+    transition: transform .4s ease;
+}
+.phone:hover { transform: rotate(0deg); }
+.phone-screen {
+    background: #f3f4f6;
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 9 / 18;
+    position: relative;
+}
+.phone-notch {
+    position: absolute;
+    top: 7px; left: 50%;
+    transform: translateX(-50%);
+    width: 78px; height: 18px;
+    background: #0a1628;
+    border-radius: 999px;
+    z-index: 5;
+}
+.mockbar {
+    background: var(--gradient-primary);
+    color: #fff;
+    padding: 2rem .65rem .55rem;
+    display: flex; align-items: center; gap: .35rem;
+}
+.mockbar-dot {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    background: rgba(255,255,255,.2);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .6rem;
+    color: #fff;
+}
+.mockbar-text { font-weight: 700; font-size: .72rem; color: #fff; }
+.mockbar-sub { font-size: .5rem; opacity: .7; letter-spacing: 1px; text-transform: uppercase; color: #fff; }
+.mock-content { padding: .55rem; }
+.mock-hero {
+    background: var(--gradient-mix);
+    color: #fff;
+    border-radius: 10px;
+    padding: .65rem;
+    box-shadow: 0 3px 10px rgba(15,30,58,.25);
+}
+.mock-hero .mh-label { font-size: .48rem; text-transform: uppercase; letter-spacing: 1px; opacity: .85; font-weight: 600; color: #fff; }
+.mock-hero .mh-value { font-size: 1.1rem; font-weight: 800; letter-spacing: -.5px; color: #fff; }
+.mock-hero .mh-meta { font-size: .48rem; opacity: .75; color: #fff; }
+.mock-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .3rem;
+    margin-top: .4rem;
+}
+.mock-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: .4rem .5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.mock-card .mc-label {
+    font-size: .43rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+.mock-card .mc-value {
+    font-size: .72rem;
+    font-weight: 800;
+    color: var(--accent-dark);
+    margin-top: .1rem;
+}
+.mock-card.primary .mc-value { color: var(--primary); }
+.mock-list { margin-top: .4rem; display: flex; flex-direction: column; gap: .25rem; }
+.mock-item {
+    background: #fff;
+    border-left: 3px solid var(--primary);
+    border-radius: 6px;
+    padding: .35rem .45rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+.mock-item.pending {
+    border-left-color: var(--accent);
+    background: linear-gradient(90deg, rgba(16,185,129,.06), #fff 60%);
+}
+.mock-item-row { display: flex; justify-content: space-between; align-items: center; }
+.mock-item-date { font-size: .48rem; font-weight: 700; color: var(--text); }
+.mock-item-amount {
+    background: var(--gradient-accent);
+    color: #fff;
+    border-radius: 999px;
+    padding: 1px 5px;
+    font-size: .48rem;
+    font-weight: 700;
+}
+.mock-item-pending {
+    background: rgba(16, 185, 129, .15);
+    color: var(--accent-dark);
+    border-radius: 999px;
+    padding: 1px 5px;
+    font-size: .44rem;
+    font-weight: 700;
+    border: 1px solid rgba(16, 185, 129, .3);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+.mock-dot {
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: mock-pulse 1.6s infinite;
+}
+@keyframes mock-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, .6); }
+    70%      { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+}
+.mock-item-stats {
+    display: flex; gap: .4rem;
+    font-size: .42rem;
+    color: var(--text-muted);
+    margin-top: .1rem;
+}
+
+@media (min-width: 768px) {
+    .phone { width: 280px; transform: rotate(4deg); }
 }
 @keyframes pulse-dot {
     0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, .6); }
@@ -1184,11 +1330,11 @@ main.container { max-width: 1180px; }
 
 <nav class="bottom-nav">
     <a href="#/"          data-route="dashboard"><i class="bi bi-house-door-fill"></i>Início</a>
-    <a href="#/historico" data-route="historico"><i class="bi bi-clock-history"></i>Histórico</a>
     <a href="#/nova" class="add-btn">
         <span class="add-circle"><i class="bi bi-plus-lg"></i></span>
         Nova
     </a>
+    <a href="#/historico" data-route="historico"><i class="bi bi-clock-history"></i>Histórico</a>
     <a href="#/sobre" data-route="sobre" id="link-sobre"><i class="bi bi-info-circle-fill"></i>Sobre<span class="sobre-pill" id="sobre-pill" hidden>Novo</span></a>
 </nav>
 
@@ -1834,27 +1980,95 @@ function renderHeatmap(jornadas) {
 
 function renderSobre(view, action) {
     action.innerHTML = '';
-    const totalLocal = load().length;
+    const jornadasReais = load().map(enriquecer);
+    const concluidas = jornadasReais.filter(j => !j.em_andamento);
+    const r = concluidas.length > 0 ? resumoDashboard(jornadasReais) : null;
+
+    // Dados pro mockup do celular (reais se houver, exemplo caso contrário)
+    const mock = r ? {
+        total: fmtBR(r.total_bruto), jornadas: r.total_jornadas,
+        rh: fmtBR(r.media_por_hora), rk: fmtBR(r.media_por_km),
+        km: fmtBR(r.total_km), horas: fmtBR(r.total_horas)
+    } : { total: '1.726,95', jornadas: 6, rh: '32,94', rk: '1,33', km: '1.448', horas: '58,5' };
+
+    const ultJ = jornadasReais.slice(0, 2);
+    const mockListaHtml = ultJ.length >= 2 ? ultJ.map(j => `
+        <div class="mock-item ${j.em_andamento ? 'pending' : ''}">
+            <div class="mock-item-row">
+                <span class="mock-item-date">${fmtData(j.data).slice(0, 5)}</span>
+                ${j.em_andamento
+                    ? '<span class="mock-item-pending"><span class="mock-dot"></span>Em andamento</span>'
+                    : `<span class="mock-item-amount">R$ ${fmtBR(j.valor_bruto)}</span>`}
+            </div>
+            ${j.em_andamento ? '' : `<div class="mock-item-stats">
+                <span>${fmtBR(j.total_km)} km</span><span>${j.total_horas_formatado}</span>
+            </div>`}
+        </div>`).join('') : `
+        <div class="mock-item pending">
+            <div class="mock-item-row">
+                <span class="mock-item-date">Hoje</span>
+                <span class="mock-item-pending"><span class="mock-dot"></span>Em andamento</span>
+            </div>
+        </div>
+        <div class="mock-item">
+            <div class="mock-item-row"><span class="mock-item-date">09/05</span><span class="mock-item-amount">R$ 285,50</span></div>
+            <div class="mock-item-stats"><span>198 km</span><span>8h 30</span></div>
+        </div>
+        <div class="mock-item">
+            <div class="mock-item-row"><span class="mock-item-date">08/05</span><span class="mock-item-amount">R$ 240,00</span></div>
+            <div class="mock-item-stats"><span>199 km</span><span>7h 30</span></div>
+        </div>`;
+
     view.innerHTML = `
         <div class="sobre-hero">
-            <div class="sobre-badge"><i class="bi bi-stars"></i> Conheça o Rota Certa</div>
-            <h1>Saiba quanto você <span class="grad-text">realmente lucra</span> em cada jornada.</h1>
-            <p class="lead">
-                O Rota Certa calcula seu R$/hora e R$/km com base nas jornadas que você registra.
-                Tudo offline, no seu celular, sem rastreio.
-            </p>
-            <div class="sobre-cta-row">
-                <a href="#/nova" class="btn btn-success btn-lg sobre-cta-primary">
-                    <i class="bi bi-plus-lg"></i> Iniciar jornada
-                </a>
-                <a href="#/" class="btn btn-outline-light sobre-cta-secondary">
-                    <i class="bi bi-bar-chart-fill"></i> Ver dashboard
-                </a>
+            <div class="sobre-hero-content">
+                <div class="sobre-badge"><i class="bi bi-stars"></i> Conheça o Rota Certa</div>
+                <h1>Saiba quanto você <span class="grad-text">realmente lucra</span> em cada jornada.</h1>
+                <p class="lead">
+                    O Rota Certa calcula seu R$/hora e R$/km com base nas jornadas que você registra.
+                    Tudo offline, no seu celular, sem rastreio.
+                </p>
+                <div class="sobre-cta-row">
+                    <a href="#/nova" class="btn btn-success btn-lg sobre-cta-primary">
+                        <i class="bi bi-plus-lg"></i> Iniciar jornada
+                    </a>
+                    <a href="#/" class="btn btn-outline-light sobre-cta-secondary">
+                        <i class="bi bi-bar-chart-fill"></i> Ver dashboard
+                    </a>
+                </div>
+                <div class="sobre-mini-stats">
+                    <div><strong>${mock.jornadas}</strong><small>Jornadas ${r ? 'suas' : 'exemplo'}</small></div>
+                    <div><strong>R$/h</strong><small>Por hora rodada</small></div>
+                    <div><strong>R$/km</strong><small>Por km percorrido</small></div>
+                </div>
             </div>
-            <div class="sobre-mini-stats">
-                <div><strong>${totalLocal}</strong><small>Jornadas registradas</small></div>
-                <div><strong>R$/h</strong><small>Por hora rodada</small></div>
-                <div><strong>R$/km</strong><small>Por km percorrido</small></div>
+            <div class="sobre-phone-wrap">
+                <div class="phone">
+                    <div class="phone-screen">
+                        <div class="phone-notch"></div>
+                        <div class="mockbar">
+                            <span class="mockbar-dot"><i class="bi bi-speedometer2"></i></span>
+                            <div>
+                                <div class="mockbar-text">Rota Certa</div>
+                                <div class="mockbar-sub">Dashboard</div>
+                            </div>
+                        </div>
+                        <div class="mock-content">
+                            <div class="mock-hero">
+                                <div class="mh-label">Lucro total</div>
+                                <div class="mh-value">R$ ${mock.total}</div>
+                                <div class="mh-meta">${mock.jornadas} jornadas · 30 dias</div>
+                            </div>
+                            <div class="mock-grid">
+                                <div class="mock-card"><div class="mc-label">R$/hora</div><div class="mc-value">R$ ${mock.rh}</div></div>
+                                <div class="mock-card"><div class="mc-label">R$/km</div><div class="mc-value">R$ ${mock.rk}</div></div>
+                                <div class="mock-card primary"><div class="mc-label">Total km</div><div class="mc-value">${mock.km}</div></div>
+                                <div class="mock-card primary"><div class="mc-label">Horas</div><div class="mc-value">${mock.horas}</div></div>
+                            </div>
+                            <div class="mock-list">${mockListaHtml}</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
