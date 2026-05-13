@@ -1539,6 +1539,8 @@ async function inicializarFirebase() {
                 return;
             }
             _fb = { auth, db, uid: user.uid };
+            _cloudReady = true;  // libera saves para o Firestore (offline persistence cuida da queue)
+            setCloudStatus('syncing', 'Conectado. Sincronizando dados...');
             assinarFirestore();
         });
     } catch (err) {
@@ -1558,29 +1560,31 @@ function assinarFirestore() {
 
         if (_firstSnapshot) {
             _firstSnapshot = false;
+            // MERGE: jornadas locais cujo id não está no remoto precisam ir pra nuvem
             const local = JSON.parse(localStorage.getItem(KEY) || '[]');
-            // Migra dados do dispositivo para a nuvem na primeira execução
-            if (remoto.length === 0 && local.length > 0) {
-                console.log('Migrando', local.length, 'jornadas para a nuvem...');
-                setCloudStatus('syncing', 'Migrando dados para a nuvem...');
+            const idsRemoto = new Set(remoto.map(j => j.id));
+            const aSubir = local.filter(j => j && j.id != null && !idsRemoto.has(j.id));
+
+            if (aSubir.length > 0) {
+                console.log(`Sincronizando ${aSubir.length} jornada(s) locais para a nuvem...`);
+                setCloudStatus('syncing', `Subindo ${aSubir.length} jornada(s) para a nuvem...`);
                 const batch = _fb.db.batch();
-                local.forEach((j, i) => {
-                    const id = j.id || (i + 1);
-                    batch.set(ref.doc(String(id)), { ...j, id });
-                });
+                aSubir.forEach(j => batch.set(ref.doc(String(j.id)), { ...j }));
                 batch.commit()
-                    .then(() => alerta(`☁️ ${local.length} jornadas sincronizadas com a nuvem!`))
+                    .then(() => alerta(`☁️ ${aSubir.length} jornada(s) salvas na nuvem!`))
                     .catch(err => {
-                        console.error('Erro na migração:', err);
-                        alerta('Erro ao migrar para a nuvem. Dados seguem salvos localmente.', 'warning');
+                        console.error('Erro ao sincronizar:', err);
+                        alerta('Erro ao subir para a nuvem: ' + err.message, 'danger');
                     });
-                return; // listener vai disparar de novo com os dados migrados
             }
+
+            // Cache imediato = remoto + locais não sincronizadas (próxima snapshot vai unificar)
+            _cache = [...remoto, ...aSubir];
+        } else {
+            _cache = remoto;
         }
 
-        _cache = remoto;
         localStorage.setItem(KEY, JSON.stringify(_cache));
-        _cloudReady = true;
         setCloudStatus('online', 'Sincronizado com a nuvem');
         render();
     }, err => {
@@ -1588,6 +1592,7 @@ function assinarFirestore() {
         if (err.code === 'permission-denied') {
             setCloudStatus('offline',
                 'Firestore sem permissão. Verifique as regras no console do Firebase.');
+            alerta('Erro: regras do Firestore não permitem leitura. Verifique a configuração.', 'danger');
         } else {
             setCloudStatus('offline', 'Erro de sincronização — dados salvos localmente');
         }
@@ -1596,28 +1601,66 @@ function assinarFirestore() {
 
 function load() { return _cache.slice(); }
 
+// Compara duas jornadas por valor (campos que persistimos)
+function _jornadaIgual(a, b) {
+    if (!a || !b) return false;
+    return a.data === b.data && a.hora_inicio === b.hora_inicio && a.hora_fim === b.hora_fim
+        && a.km_inicial === b.km_inicial && a.km_final === b.km_final && a.valor_bruto === b.valor_bruto;
+}
+
+// Limpa um objeto pra Firestore (sem undefined, sem campos enriquecidos)
+function _limparParaFirestore(j) {
+    const limpo = {
+        id: j.id,
+        data: j.data,
+        hora_inicio: j.hora_inicio,
+        hora_fim: j.hora_fim == null ? null : j.hora_fim,
+        km_inicial: j.km_inicial,
+        km_final:    j.km_final    == null ? null : j.km_final,
+        valor_bruto: j.valor_bruto == null ? null : j.valor_bruto,
+    };
+    return limpo;
+}
+
 function save(novaLista) {
     const cacheAntigo = _cache;
     _cache = novaLista;
     localStorage.setItem(KEY, JSON.stringify(novaLista));
 
-    if (!_cloudReady) return;  // modo offline-only
+    if (!_cloudReady) {
+        console.log('Salvo localmente (nuvem ainda não conectou).');
+        return;
+    }
 
-    const ref = _fb.db.collection('users').doc(_fb.uid).collection('jornadas');
-    const idsNovos = new Set(novaLista.map(j => j.id));
-    const idsAntigos = new Set(cacheAntigo.map(j => j.id));
-    const batch = _fb.db.batch();
+    try {
+        const ref = _fb.db.collection('users').doc(_fb.uid).collection('jornadas');
+        const mapaAntigo = new Map(cacheAntigo.map(j => [j.id, j]));
+        const idsNovos = new Set(novaLista.map(j => j.id));
 
-    novaLista.forEach(j => batch.set(ref.doc(String(j.id)), { ...j }));
-    idsAntigos.forEach(id => { if (!idsNovos.has(id)) batch.delete(ref.doc(String(id))); });
+        const aEscrever = novaLista.filter(j => !_jornadaIgual(mapaAntigo.get(j.id), j));
+        const aDeletar = cacheAntigo.filter(j => !idsNovos.has(j.id));
 
-    setCloudStatus('syncing', 'Sincronizando...');
-    batch.commit()
-        .then(() => setCloudStatus('online', 'Sincronizado com a nuvem'))
-        .catch(err => {
-            console.error('Erro ao salvar na nuvem:', err);
-            setCloudStatus('offline', 'Salvo localmente. Sincronizará quando voltar online.');
-        });
+        if (aEscrever.length === 0 && aDeletar.length === 0) return;
+
+        const batch = _fb.db.batch();
+        aEscrever.forEach(j => batch.set(ref.doc(String(j.id)), _limparParaFirestore(j)));
+        aDeletar.forEach(j  => batch.delete(ref.doc(String(j.id))));
+
+        setCloudStatus('syncing', `Sincronizando ${aEscrever.length + aDeletar.length} alteração(ões)...`);
+        batch.commit()
+            .then(() => {
+                console.log(`Sync OK: ${aEscrever.length} escrita(s), ${aDeletar.length} exclusão(ões).`);
+                setCloudStatus('online', 'Sincronizado com a nuvem');
+            })
+            .catch(err => {
+                console.error('Erro ao salvar na nuvem:', err.code, err.message);
+                setCloudStatus('offline', 'Salvo localmente. Sincronizará quando voltar online.');
+                alerta('Aviso: salvou no celular mas falhou ao sincronizar: ' + err.message, 'warning');
+            });
+    } catch (err) {
+        console.error('Exceção em save():', err);
+        // Dados já estão no localStorage — não há perda
+    }
 }
 
 function nextId(list) { return list.reduce((m, j) => Math.max(m, j.id || 0), 0) + 1; }
